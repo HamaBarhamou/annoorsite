@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-md mx-auto px-4 py-12">
+<h1 class="text-3xl font-bold mb-6">Contact</h1>
+<form method="post" class="space-y-4 border rounded p-5">
+{% csrf_token %}
+{{ form.non_field_errors }}
+{% for field in form %}
+<div>
+<label class="block text-sm font-medium">{{ field.label }}</label>
+{{ field }}
+<p class="text-xs text-slate-500">{{ field.help_text }}</p>
+{% for err in field.errors %}<p class="text-red-600 text-sm">{{ err }}</p>{% endfor %}
+</div>
+{% endfor %}
+<button class="px-4 py-2 bg-orange-500 text-white rounded">Envoyer</button>
+</form>
+</div>
+{% endblock %}

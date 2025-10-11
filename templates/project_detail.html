@@ -1,0 +1,14 @@
+{# project_detail.html #}
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-3xl mx-auto px-4 py-12">
+<h1 class="text-3xl font-bold">{{ project.title }}</h1>
+<p class="opacity-70">{{ project.client }} — {{ project.location }} — {{ project.year }}</p>
+<h2 class="text-xl font-semibold mt-8">Contexte</h2>
+<div class="mt-2">{{ project.context|linebreaks }}</div>
+<h2 class="text-xl font-semibold mt-6">Solution</h2>
+<div class="mt-2">{{ project.solution|linebreaks }}</div>
+<h2 class="text-xl font-semibold mt-6">Résultats</h2>
+<div class="mt-2">{{ project.results|linebreaks }}</div>
+</div>
+{% endblock %}
