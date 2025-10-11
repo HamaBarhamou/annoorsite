@@ -1,6 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+from django.core.validators import RegexValidator
 
 
 class TimeStamped(models.Model):
@@ -118,3 +119,59 @@ class Post(TimeStamped):
 
     def get_absolute_url(self):
         return reverse("blog_detail", args=[self.slug])
+
+
+class SiteContact(models.Model):
+    # Identité
+    company_name = models.CharField("Raison sociale", max_length=160, default="ANNOOR")
+    email = models.EmailField("Email de contact", blank=True)
+    phone = models.CharField(
+        "Téléphone",
+        max_length=40,
+        blank=True,
+        help_text="+227 …",
+        validators=[RegexValidator(r"^[0-9+\-\s().]+$", "Format téléphone invalide.")],
+    )
+    whatsapp = models.CharField(
+        "WhatsApp (numéro)",
+        max_length=40,
+        blank=True,
+        help_text="Ex: 22790000000 (chiffres uniquement si possible)",
+        validators=[
+            RegexValidator(r"^[0-9]+$", "Chiffres uniquement (indicatif compris).")
+        ],
+    )
+
+    # Adresse
+    address = models.CharField("Adresse (ligne 1)", max_length=200, blank=True)
+    city = models.CharField("Ville", max_length=100, blank=True, default="Niamey")
+    country = models.CharField("Pays", max_length=100, blank=True, default="Niger")
+
+    # Présence en ligne
+    website = models.URLField("Site web", blank=True)
+    facebook = models.URLField(blank=True)
+    linkedin = models.URLField(blank=True)
+    x_twitter = models.URLField("X / Twitter", blank=True)
+
+    # Divers
+    hours = models.CharField(
+        "Horaires", max_length=160, blank=True, default="Lun–Ven, 9h–18h (GMT+1)"
+    )
+    map_embed_url = models.URLField("Google Maps Embed URL", blank=True)
+
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Coordonnées du site"
+        verbose_name_plural = "Coordonnées du site"
+
+    def __str__(self):
+        return f"{self.company_name} — {self.city or ''}".strip()
+
+    @property
+    def whatsapp_url(self):
+        if not self.whatsapp:
+            return ""
+        # wa.me exige des chiffres uniquement
+        digits = "".join([c for c in self.whatsapp if c.isdigit()])
+        return f"https://wa.me/{digits}" if digits else ""

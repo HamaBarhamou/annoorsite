@@ -1,17 +1,54 @@
 <footer class="border-t mt-16">
   <div class="max-w-6xl mx-auto px-4 py-10 grid md:grid-cols-4 gap-8 text-sm">
+
+    <!-- Identité -->
     <div>
-      <div class="font-semibold">ANNOOR</div>
+      <div class="font-semibold">{{ site_contact.company_name|default:"ANNOOR" }}</div>
       <p class="mt-2 text-slate-600">Ingénierie • Industriel • Travaux Publics</p>
+
+      {# Réseaux sociaux si présents #}
+      {% if site_contact.facebook or site_contact.linkedin or site_contact.x_twitter %}
+      <div class="mt-3 flex items-center gap-3 text-slate-600">
+        {% if site_contact.facebook %}
+          <a href="{{ site_contact.facebook }}" target="_blank" rel="noopener" class="hover:underline">Facebook</a>
+        {% endif %}
+        {% if site_contact.linkedin %}
+          <a href="{{ site_contact.linkedin }}" target="_blank" rel="noopener" class="hover:underline">LinkedIn</a>
+        {% endif %}
+        {% if site_contact.x_twitter %}
+          <a href="{{ site_contact.x_twitter }}" target="_blank" rel="noopener" class="hover:underline">X</a>
+        {% endif %}
+      </div>
+      {% endif %}
     </div>
+
+    <!-- Contact -->
     <div>
       <div class="font-semibold">Contact</div>
       <ul class="mt-2 space-y-1 text-slate-600">
-        <li>Niamey — Niger</li>
-        <li>Tél : +227 …</li>
-        <li>Email : contact@annoor.example</li>
+        {% if site_contact.address or site_contact.city or site_contact.country %}
+          <li>
+            {{ site_contact.address }}{% if site_contact.address %},{% endif %}
+            {{ site_contact.city }}{% if site_contact.city and site_contact.country %},{% endif %}
+            {{ site_contact.country }}
+          </li>
+        {% endif %}
+        {% if site_contact.phone %}
+          <li>Tél : <a href="tel:{{ site_contact.phone|urlize }}" class="hover:underline">{{ site_contact.phone }}</a></li>
+        {% endif %}
+        {% if site_contact.email %}
+          <li>Email : <a href="mailto:{{ site_contact.email }}" class="hover:underline">{{ site_contact.email }}</a></li>
+        {% endif %}
+        {% if site_contact.whatsapp_url %}
+          <li><a href="{{ site_contact.whatsapp_url }}" target="_blank" rel="noopener" class="text-emerald-700 hover:underline">WhatsApp</a></li>
+        {% endif %}
+        {% if site_contact.website %}
+          <li><a href="{{ site_contact.website }}" target="_blank" rel="noopener" class="hover:underline">Site web</a></li>
+        {% endif %}
       </ul>
     </div>
+
+    <!-- Liens -->
     <div>
       <div class="font-semibold">Liens</div>
       <ul class="mt-2 space-y-1 text-slate-600">
@@ -21,17 +58,29 @@
         <li><a href="/contact/" class="hover:underline">Demander un devis</a></li>
       </ul>
     </div>
+
+    <!-- Légal / Carte (optionnelle) -->
     <div>
       <div class="font-semibold">Légal</div>
       <ul class="mt-2 space-y-1 text-slate-600">
         <li><a href="#" class="hover:underline">Mentions légales</a></li>
         <li><a href="#" class="hover:underline">Politique de confidentialité</a></li>
       </ul>
+
+      {% if site_contact.map_embed_url %}
+      <div class="mt-4 rounded overflow-hidden border">
+        <iframe
+          src="{{ site_contact.map_embed_url }}"
+          width="100%" height="140" style="border:0;" allowfullscreen=""
+          loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+      {% endif %}
     </div>
   </div>
+
   <div class="border-t">
     <div class="max-w-6xl mx-auto px-4 py-4 text-xs text-slate-500 flex items-center justify-between">
-      <span>© {{ now|date:"Y" }} ANNOOR — Tous droits réservés</span>
+      <span>© {{ now|date:"Y" }} {{ site_contact.company_name|default:"ANNOOR" }} — Tous droits réservés</span>
       <span>RCCM/NIF : …</span>
     </div>
   </div>

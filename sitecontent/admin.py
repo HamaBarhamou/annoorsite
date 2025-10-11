@@ -1,5 +1,13 @@
 from django.contrib import admin
-from .models import HomeSettings, Partner, Service, Project, ProjectImage, Post
+from .models import (
+    HomeSettings,
+    Partner,
+    Service,
+    Project,
+    ProjectImage,
+    Post,
+    SiteContact,
+)
 
 
 @admin.register(HomeSettings)
@@ -65,3 +73,23 @@ class PostAdmin(admin.ModelAdmin):
     list_display = ("title", "published", "pub_date")
     list_filter = ("published",)
     search_fields = ("title", "body")
+
+
+@admin.register(SiteContact)
+class SiteContactAdmin(admin.ModelAdmin):
+    list_display = ("company_name", "phone", "email", "updated")
+    fieldsets = (
+        ("Identité", {"fields": ("company_name", "email", "phone", "whatsapp")}),
+        ("Adresse", {"fields": ("address", "city", "country")}),
+        (
+            "Présence en ligne",
+            {"fields": ("website", "facebook", "linkedin", "x_twitter")},
+        ),
+        ("Informations", {"fields": ("hours", "map_embed_url")}),
+    )
+
+    # Limite à 1 enregistrement (singleton “soft”)
+    def has_add_permission(self, request):
+        if SiteContact.objects.exists():
+            return False
+        return super().has_add_permission(request)
