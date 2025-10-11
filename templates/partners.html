@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block extra_head %}
+  <meta name="description" content="Nos partenaires et références — ANNOOR">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"CollectionPage",
+    "name":"Partenaires — ANNOOR",
+    "about":"Liste des partenaires et références d'ANNOOR"
+  }
+  </script>
+{% endblock %}
+
+{% block content %}
+<section class="relative">
+  <div class="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-800"></div>
+  <div class="relative max-w-6xl mx-auto px-4 py-16 text-white">
+    <nav class="text-xs opacity-80 mb-3">
+      <a href="/" class="hover:underline">Accueil</a> / <span>Partenaires</span>
+    </nav>
+    <h1 class="text-3xl md:text-5xl font-bold tracking-tight">Nos partenaires</h1>
+    <p class="mt-3 max-w-2xl text-white/90">Ils nous font confiance sur des projets d’ingénierie, d’installation et de maintenance.</p>
+  </div>
+</section>
+
+<div class="max-w-6xl mx-auto px-4 py-12">
+  {% if partners %}
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+      {% for p in partners %}
+        <div class="group rounded-xl border bg-white p-4 flex items-center justify-center h-28 hover:shadow transition">
+          {% if p.website %}
+            <a href="{{ p.website }}" target="_blank" rel="noopener" class="block w-full h-full flex items-center justify-center">
+              {% if p.logo %}
+                <img src="{{ p.logo.url }}" alt="Logo {{ p.name }}" class="max-h-16 object-contain opacity-90 group-hover:opacity-100 transition" loading="lazy">
+              {% else %}
+                <span class="text-sm text-slate-600">{{ p.name }}</span>
+              {% endif %}
+            </a>
+          {% else %}
+            {% if p.logo %}
+              <img src="{{ p.logo.url }}" alt="Logo {{ p.name }}" class="max-h-16 object-contain opacity-90" loading="lazy">
+            {% else %}
+              <span class="text-sm text-slate-600">{{ p.name }}</span>
+            {% endif %}
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="rounded-xl border bg-white p-8 text-slate-600">
+      Aucune référence affichée pour le moment.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
