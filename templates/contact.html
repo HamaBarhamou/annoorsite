@@ -1,19 +1,117 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block extra_head %}
+  <meta name="description" content="Contactez ANNOOR — devis, étude, assistance technique.">
+{% endblock %}
 {% block content %}
-<div class="max-w-md mx-auto px-4 py-12">
-<h1 class="text-3xl font-bold mb-6">Contact</h1>
-<form method="post" class="space-y-4 border rounded p-5">
-{% csrf_token %}
-{{ form.non_field_errors }}
-{% for field in form %}
-<div>
-<label class="block text-sm font-medium">{{ field.label }}</label>
-{{ field }}
-<p class="text-xs text-slate-500">{{ field.help_text }}</p>
-{% for err in field.errors %}<p class="text-red-600 text-sm">{{ err }}</p>{% endfor %}
-</div>
-{% endfor %}
-<button class="px-4 py-2 bg-orange-500 text-white rounded">Envoyer</button>
-</form>
-</div>
+
+<section class="relative">
+  <div class="absolute inset-0 bg-slate-900"></div>
+  <div class="relative max-w-6xl mx-auto px-4 py-16 text-white">
+    <nav class="text-xs opacity-80 mb-3">
+      <a href="/" class="hover:underline">Accueil</a> / <span>Contact</span>
+    </nav>
+    <h1 class="text-3xl md:text-5xl font-bold">Parlons de votre projet</h1>
+    <p class="mt-3 max-w-2xl opacity-90">Dites-nous votre besoin, vos délais et vos contraintes. Nous revenons vers vous rapidement.</p>
+  </div>
+</section>
+
+{% if messages %}
+  <div class="max-w-2xl mx-auto px-4 mt-6">
+    {% for m in messages %}
+      <div class="mb-3 rounded p-3 text-sm {% if m.tags == 'success' %}bg-green-50 text-green-800 border border-green-200{% else %}bg-red-50 text-red-800 border border-red-200{% endif %}">
+        {{ m }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<section class="max-w-6xl mx-auto px-4 py-10 grid md:grid-cols-2 gap-10">
+  <div class="rounded-xl border bg-white p-6 md:p-8 shadow-sm">
+    <h2 class="text-xl font-semibold mb-1">Formulaire de contact</h2>
+    <p class="text-sm text-slate-600 mb-6">Les champs marqués * sont obligatoires.</p>
+
+    <form method="post" novalidate onsubmit="this.querySelector('button[type=submit]').classList.add('opacity-70','pointer-events-none');">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="mb-4 rounded border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label for="{{ form.name.id_for_label }}" class="block text-xs uppercase tracking-wide text-slate-600 mb-1">Nom *</label>
+          {{ form.name }}
+          {% for err in form.name.errors %}<p class="mt-1 text-xs text-red-600">{{ err }}</p>{% endfor %}
+        </div>
+
+        <div>
+          <label for="{{ form.email.id_for_label }}" class="block text-xs uppercase tracking-wide text-slate-600 mb-1">Email *</label>
+          {{ form.email }}
+          {% for err in form.email.errors %}<p class="mt-1 text-xs text-red-600">{{ err }}</p>{% endfor %}
+        </div>
+
+        <div>
+          <label for="{{ form.phone.id_for_label }}" class="block text-xs uppercase tracking-wide text-slate-600 mb-1">Téléphone</label>
+          {{ form.phone }}
+          {% for err in form.phone.errors %}<p class="mt-1 text-xs text-red-600">{{ err }}</p>{% endfor %}
+        </div>
+
+        <div>
+          <label for="{{ form.subject.id_for_label }}" class="block text-xs uppercase tracking-wide text-slate-600 mb-1">Sujet *</label>
+          {{ form.subject }}
+          {% for err in form.subject.errors %}<p class="mt-1 text-xs text-red-600">{{ err }}</p>{% endfor %}
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <div class="flex items-center justify-between">
+          <label for="{{ form.message.id_for_label }}" class="block text-xs uppercase tracking-wide text-slate-600 mb-1">Message *</label>
+          <span class="text-xs text-slate-400">Max 2000 caractères</span>
+        </div>
+        {{ form.message }}
+        {% for err in form.message.errors %}<p class="mt-1 text-xs text-red-600">{{ err }}</p>{% endfor %}
+      </div>
+
+      {% if form.hp %}
+        <div class="hidden">
+          {{ form.hp }}
+        </div>
+      {% endif %}
+
+      <div class="mt-6 flex items-center justify-between">
+        <p class="text-xs text-slate-500">En envoyant ce formulaire, vous acceptez notre <a href="#" class="underline">politique de confidentialité</a>.</p>
+        <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition focus:outline-none focus:ring-2 focus:ring-orange-500">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          Envoyer
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <aside class="space-y-6">
+    <div class="rounded-xl border bg-white p-6 md:p-8 shadow-sm">
+      <h3 class="text-lg font-semibold">Coordonnées</h3>
+      <ul class="mt-3 text-sm text-slate-700 space-y-1">
+        <li>Niamey — Niger</li>
+        <li>Tél : +227 …</li>
+        <li>Email : contact@annoor.example</li>
+      </ul>
+      <div class="mt-5 h-px bg-slate-200"></div>
+      <p class="mt-5 text-sm text-slate-600">Horaires : Lun–Ven, 9h–18h (GMT+1).</p>
+    </div>
+
+    <div class="rounded-xl border bg-white p-6 md:p-8 shadow-sm">
+      <h3 class="text-lg font-semibold">Pourquoi ANNOOR ?</h3>
+      <ul class="mt-3 text-sm text-slate-700 space-y-2">
+        <li>• Expertise industrielle et agro-procédés</li>
+        <li>• Mise en service & maintenance</li>
+        <li>• Engagement qualité & sécurité</li>
+      </ul>
+    </div>
+  </aside>
+</section>
+
 {% endblock %}

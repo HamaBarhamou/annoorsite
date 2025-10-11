@@ -20,6 +20,7 @@ class HomeSettings(TimeStamped):
         max_length=60, blank=True, default="Demander un devis"
     )
     hero_cta_url = models.CharField(max_length=200, blank=True, default="#contact")
+    hero_bg = models.ImageField(upload_to="home/", blank=True)
     stat_1_label = models.CharField(
         max_length=80, blank=True, default="Années d'expérience"
     )
@@ -79,7 +80,6 @@ class Project(TimeStamped):
     solution = models.TextField(blank=True)
     results = models.TextField(blank=True)
     cover = models.ImageField(upload_to="projects/", blank=True)
-    gallery = models.ManyToManyField("ProjectImage", blank=True)
 
     class Meta:
         ordering = ["-created"]
@@ -92,6 +92,9 @@ class Project(TimeStamped):
 
 
 class ProjectImage(models.Model):
+    project = models.ForeignKey(
+        Project, related_name="images", on_delete=models.CASCADE, null=True, blank=True
+    )
     image = models.ImageField(upload_to="projects/gallery/")
     caption = models.CharField(max_length=160, blank=True)
 

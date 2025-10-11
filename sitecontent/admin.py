@@ -13,6 +13,7 @@ class HomeSettingsAdmin(admin.ModelAdmin):
                     "hero_subtitle",
                     "hero_cta_label",
                     "hero_cta_url",
+                    "hero_bg",
                 )
             },
         ),
@@ -45,8 +46,10 @@ class ServiceAdmin(admin.ModelAdmin):
 
 
 class ProjectImageInline(admin.TabularInline):
-    model = Project.gallery.through
-    extra = 1
+    model = ProjectImage
+    extra = 2
+    fields = ("image", "caption")
+    show_change_link = True
 
 
 @admin.register(Project)

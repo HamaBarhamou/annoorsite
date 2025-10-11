@@ -1,12 +1,21 @@
-{# projects_list.html #}
 {% extends 'base.html' %}
 {% block content %}
-<div class="max-w-6xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-6">
-{% for p in projects %}
-<a href="{{ p.get_absolute_url }}" class="border rounded p-5 hover:shadow">
-<div class="text-lg font-semibold">{{ p.title }}</div>
-<p class="mt-2 text-sm opacity-80">{{ p.client }} — {{ p.location }}{% if p.year %} ({{ p.year }}){% endif %}</p>
-</a>
-{% endfor %}
+<div class="max-w-6xl mx-auto px-4 py-12">
+  <h1 class="text-3xl font-bold mb-6">Références & projets</h1>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    {% for p in projects %}
+      <a href="{{ p.get_absolute_url }}" class="group rounded overflow-hidden border hover:shadow transition">
+        {% if p.cover %}
+          <img src="{{ p.cover.url }}" alt="" class="h-40 w-full object-cover group-hover:scale-[1.02] transition">
+        {% elif p.images.first %}
+          <img src="{{ p.images.first.image.url }}" alt="" class="h-40 w-full object-cover">
+        {% endif %}
+        <div class="p-5">
+          <div class="text-lg font-semibold">{{ p.title }}</div>
+          <p class="mt-2 text-sm opacity-80">{{ p.client }} — {{ p.location }}</p>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
 </div>
 {% endblock %}

@@ -1,14 +1,80 @@
-{# project_detail.html #}
 {% extends 'base.html' %}
+{% block extra_head %}
+  <meta name="description" content="{{ project.title }} — {{ project.client }} {{ project.location }} {{ project.year }}">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Project",
+    "name":"{{ project.title|escapejs }}",
+    "location":"{{ project.location|escapejs }}",
+    "startDate":"{{ project.year|default:'' }}",
+    "description":"{{ project.context|truncatechars:200|escapejs }}"
+  }
+  </script>
+{% endblock %}
 {% block content %}
-<div class="max-w-3xl mx-auto px-4 py-12">
-<h1 class="text-3xl font-bold">{{ project.title }}</h1>
-<p class="opacity-70">{{ project.client }} — {{ project.location }} — {{ project.year }}</p>
-<h2 class="text-xl font-semibold mt-8">Contexte</h2>
-<div class="mt-2">{{ project.context|linebreaks }}</div>
-<h2 class="text-xl font-semibold mt-6">Solution</h2>
-<div class="mt-2">{{ project.solution|linebreaks }}</div>
-<h2 class="text-xl font-semibold mt-6">Résultats</h2>
-<div class="mt-2">{{ project.results|linebreaks }}</div>
+<section class="relative">
+  {% if project.cover %}
+    <img src="{{ project.cover.url }}" alt="" class="absolute inset-0 w-full h-72 object-cover">
+    <div class="absolute inset-0 h-72 bg-slate-900/60"></div>
+  {% endif %}
+  <div class="relative max-w-6xl mx-auto px-4 pt-20 pb-6 text-white">
+    <nav class="text-xs opacity-80 mb-2"><a href="/" class="hover:underline">Accueil</a> / <a href="/projects/" class="hover:underline">Projets</a> / <span>{{ project.title }}</span></nav>
+    <h1 class="text-3xl md:text-4xl font-bold">{{ project.title }}</h1>
+    <p class="mt-2 opacity-90">{{ project.client }} — {{ project.location }}{% if project.year %} — {{ project.year }}{% endif %}</p>
+  </div>
+</section>
+
+<div class="max-w-6xl mx-auto px-4 py-10 grid md:grid-cols-3 gap-10">
+  <article class="md:col-span-2 space-y-8 leading-relaxed text-slate-700">
+    {% if project.context %}
+      <section>
+        <h2 class="text-xl font-semibold mb-2">Contexte</h2>
+        <div>{{ project.context|linebreaks }}</div>
+      </section>
+    {% endif %}
+
+    {% if project.solution %}
+      <section>
+        <h2 class="text-xl font-semibold mb-2">Solution</h2>
+        <div>{{ project.solution|linebreaks }}</div>
+      </section>
+    {% endif %}
+
+    {% if project.results %}
+      <section>
+        <h2 class="text-xl font-semibold mb-2">Résultats</h2>
+        <div>{{ project.results|linebreaks }}</div>
+      </section>
+    {% endif %}
+  </article>
+
+  <aside class="md:col-span-1">
+    <div class="rounded border p-4 bg-slate-50">
+      <h3 class="font-semibold">Infos projet</h3>
+      <dl class="mt-3 text-sm space-y-1">
+        {% if project.client %}<div class="flex gap-2"><dt class="opacity-60 w-24">Client</dt><dd>{{ project.client }}</dd></div>{% endif %}
+        {% if project.location %}<div class="flex gap-2"><dt class="opacity-60 w-24">Lieu</dt><dd>{{ project.location }}</dd></div>{% endif %}
+        {% if project.year %}<div class="flex gap-2"><dt class="opacity-60 w-24">Année</dt><dd>{{ project.year }}</dd></div>{% endif %}
+      </dl>
+      <a href="/contact/" class="inline-block mt-4 px-4 py-2 rounded bg-orange-500 text-white hover:bg-orange-600 transition text-sm">Discuter d’un projet similaire</a>
+    </div>
+  </aside>
 </div>
+
+{# GALERIE #}
+{% if project.images.exists %}
+<section class="max-w-6xl mx-auto px-4 pb-14">
+  <h2 class="text-xl font-semibold mb-4">Galerie</h2>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    {% for pic in project.images.all %}
+      <figure class="group overflow-hidden rounded border bg-white">
+        <img src="{{ pic.image.url }}" alt="{{ pic.caption }}" class="w-full h-36 object-cover group-hover:scale-[1.02] transition">
+        {% if pic.caption %}<figcaption class="px-2 py-1 text-xs text-slate-600">{{ pic.caption }}</figcaption>{% endif %}
+      </figure>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
 {% endblock %}

@@ -1,12 +1,22 @@
-<header class="border-b">
-<div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-<a href="/" class="font-semibold">ANNOOR</a>
-<nav class="flex gap-6 text-sm">
-<a href="/services/">Services</a>
-<a href="/projects/">Projets</a>
-<a href="/partners/">Partenaires</a>
-<a href="/blog/">Actus</a>
-<a href="/contact/" class="px-3 py-1 rounded bg-orange-500 text-white">Contact</a>
-</nav>
-</div>
+<header class="sticky top-0 z-40 border-b bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+    <a href="/" class="font-semibold tracking-tight">ANNOOR</a>
+    <nav class="hidden md:flex gap-6 text-sm">
+      <a href="/services/" class="hover:text-slate-900 text-slate-600">Services</a>
+      <a href="/projects/" class="hover:text-slate-900 text-slate-600">Projets</a>
+      <a href="/partners/" class="hover:text-slate-900 text-slate-600">Partenaires</a>
+      <a href="/blog/" class="hover:text-slate-900 text-slate-600">Actus</a>
+      <a href="/contact/" class="px-3 py-1 rounded bg-orange-500 text-white hover:bg-orange-600 transition">Contact</a>
+    </nav>
+    <button class="md:hidden px-3 py-1 rounded border text-sm" onclick="document.getElementById('mnav').classList.toggle('hidden')">Menu</button>
+  </div>
+  <nav id="mnav" class="md:hidden hidden border-t bg-white/95">
+    <div class="max-w-6xl mx-auto px-4 py-2 flex flex-col gap-2 text-sm">
+      <a href="/services/" class="py-1">Services</a>
+      <a href="/projects/" class="py-1">Projets</a>
+      <a href="/partners/" class="py-1">Partenaires</a>
+      <a href="/blog/" class="py-1">Actus</a>
+      <a href="/contact/" class="py-1">Contact</a>
+    </div>
+  </nav>
 </header>

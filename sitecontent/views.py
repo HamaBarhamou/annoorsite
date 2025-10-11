@@ -57,14 +57,26 @@ def blog_detail(request, slug):
 
 
 def contact(request):
+    """
+    GET  -> affiche le formulaire
+    POST -> valide, envoie l'email et retourne un CSV (ou ré-affiche erreurs)
+    """
     if request.method == "POST":
         form = ContactForm(request.POST)
-    if form.is_valid():
-        form.send_email()
-        csv_bytes = form.to_csv_bytes()
-        resp = HttpResponse(csv_bytes, content_type="text/csv")
-        resp["Content-Disposition"] = 'attachment; filename="contact.csv"'
-        return resp
+        if form.is_valid():
+            # Envoi email
+            form.send_email()
+
+            # Option: message flash (si tu préfères rediriger au lieu de renvoyer un CSV)
+            # messages.success(request, "Merci ! Votre message a bien été envoyé.")
+
+            # Retourner un CSV téléchargeable
+            csv_bytes = form.to_csv_bytes()
+            resp = HttpResponse(csv_bytes, content_type="text/csv")
+            resp["Content-Disposition"] = 'attachment; filename="contact.csv"'
+            return resp
+        # si non valide -> on tombe en bas et on ré-affiche le formulaire avec erreurs
     else:
         form = ContactForm()
+
     return render(request, "contact.html", {"form": form})

@@ -1,5 +1,38 @@
 <footer class="border-t mt-16">
-  <div class="max-w-6xl mx-auto px-4 py-8 text-sm text-slate-600">
-    © {{ now|date:"Y" }} ANNOOR — Tous droits réservés
+  <div class="max-w-6xl mx-auto px-4 py-10 grid md:grid-cols-4 gap-8 text-sm">
+    <div>
+      <div class="font-semibold">ANNOOR</div>
+      <p class="mt-2 text-slate-600">Ingénierie • Industriel • Travaux Publics</p>
+    </div>
+    <div>
+      <div class="font-semibold">Contact</div>
+      <ul class="mt-2 space-y-1 text-slate-600">
+        <li>Niamey — Niger</li>
+        <li>Tél : +227 …</li>
+        <li>Email : contact@annoor.example</li>
+      </ul>
+    </div>
+    <div>
+      <div class="font-semibold">Liens</div>
+      <ul class="mt-2 space-y-1 text-slate-600">
+        <li><a href="/services/" class="hover:underline">Services</a></li>
+        <li><a href="/projects/" class="hover:underline">Références</a></li>
+        <li><a href="/blog/" class="hover:underline">Actualités</a></li>
+        <li><a href="/contact/" class="hover:underline">Demander un devis</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="font-semibold">Légal</div>
+      <ul class="mt-2 space-y-1 text-slate-600">
+        <li><a href="#" class="hover:underline">Mentions légales</a></li>
+        <li><a href="#" class="hover:underline">Politique de confidentialité</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t">
+    <div class="max-w-6xl mx-auto px-4 py-4 text-xs text-slate-500 flex items-center justify-between">
+      <span>© {{ now|date:"Y" }} ANNOOR — Tous droits réservés</span>
+      <span>RCCM/NIF : …</span>
+    </div>
   </div>
 </footer>

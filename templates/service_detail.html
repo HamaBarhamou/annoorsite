@@ -1,8 +1,31 @@
-{# service_detail.html #}
 {% extends 'base.html' %}
+{% block extra_head %}
+  <meta name="description" content="{{ service.excerpt|default:service.title }}">
+{% endblock %}
 {% block content %}
-<div class="max-w-3xl mx-auto px-4 py-12">
-<h1 class="text-3xl font-bold">{{ service.title }}</h1>
-<div class="prose max-w-none mt-6">{{ service.body|linebreaks }}</div>
+<section class="relative">
+  {% if service.cover %}
+    <img src="{{ service.cover.url }}" alt="" class="absolute inset-0 w-full h-64 object-cover">
+    <div class="absolute inset-0 h-64 bg-slate-900/60"></div>
+  {% endif %}
+  <div class="relative max-w-6xl mx-auto px-4 pt-16 pb-6 text-white">
+    <nav class="text-xs opacity-80 mb-2"><a href="/" class="hover:underline">Accueil</a> / <a href="/services/" class="hover:underline">Services</a> / <span>{{ service.title }}</span></nav>
+    <h1 class="text-3xl md:text-4xl font-bold">{{ service.title }}</h1>
+    {% if service.excerpt %}
+      <p class="mt-2 max-w-2xl">{{ service.excerpt }}</p>
+    {% endif %}
+  </div>
+</section>
+
+<div class="max-w-3xl mx-auto px-4 py-10">
+  <article class="space-y-6 leading-relaxed text-slate-700">
+    {{ service.body|linebreaks }}
+  </article>
+
+  <div class="mt-10 p-6 rounded border bg-slate-50">
+    <h2 class="text-xl font-semibold">Besoin d’un devis ?</h2>
+    <p class="text-sm opacity-80 mt-1">Parlez-nous de votre projet, vos délais et vos contraintes.</p>
+    <a href="/contact/" class="inline-block mt-4 px-5 py-2 rounded bg-orange-500 text-white hover:bg-orange-600 transition">Nous contacter</a>
+  </div>
 </div>
 {% endblock %}
