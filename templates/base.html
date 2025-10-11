@@ -1,18 +1,62 @@
-{% load static %}
 <!doctype html>
-<html lang="fr">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>{% block title %}ANNOOR — Ingénierie & Industriel{% endblock %}</title>
-<meta name="description" content="Solutions industrielles, bâtiments et TP au Niger." />
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="icon" href="{% static 'img/favicon.png' %}" />
-{% block extra_head %}{% endblock %}
-</head>
-<body class="text-slate-800">
-{% include 'partials/_header.html' %}
-<main>{% block content %}{% endblock %}</main>
-{% include 'partials/_footer.html' %}
-</body>
+<html lang="fr" class="scroll-smooth">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}ANNOOR — Ingénierie & Industriel{% endblock %}</title>
+    <meta name="theme-color" content="#0f172a">
+    {% block extra_head %}{% endblock %}
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CDN (sans build, parfait pour dev / POC) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          container: { center: true, padding: "1rem" },
+          extend: {
+            colors: {
+              brand: { DEFAULT: "#f97316", 50:"#FFF7ED", 100:"#FFEDD5", 500:"#f97316", 600:"#ea580c" },
+              ink: { 900:"#0f172a", 700:"#334155", 500:"#64748b" }
+            },
+            boxShadow: {
+              card: "0 10px 30px -12px rgba(2,8,23,.2)"
+            },
+            borderRadius: { xl: "0.9rem", "2xl": "1.25rem" }
+          }
+        }
+      }
+    </script>
+
+    <style>
+      :root{ --bg: #0b1220; }
+      body{ font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"; }
+      /* utilitaires */
+      .glass { background: rgba(255,255,255,.06); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.08); }
+      .card { @apply rounded-2xl border border-slate-200 bg-white shadow-card; }
+      .btn { @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition; }
+      .btn-primary { @apply bg-brand text-white hover:bg-brand-600; }
+      .btn-ghost { @apply border border-white/20 text-white hover:bg-white/10; }
+      @media (prefers-reduced-motion:no-preference) {
+        .fade-up { opacity:0; transform: translateY(12px); animation:fadeUp .6s ease forwards; }
+        .fade-del-1 { animation-delay:.1s; } .fade-del-2 { animation-delay:.2s; } .fade-del-3 { animation-delay:.3s; }
+      }
+      @keyframes fadeUp { to { opacity:1; transform:none; } }
+    </style>
+  </head>
+  <body class="bg-white text-slate-800 antialiased">
+    <!-- Header -->
+    {% include "partials/_header.html" %}
+
+    <!-- Main -->
+    <main class="min-h-screen">
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    {% include "partials/_footer.html" %}
+  </body>
 </html>

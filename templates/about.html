@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block extra_head %}
+<meta name="description" content="À propos d’ANNOOR — ingénierie, installation et maintenance industrielles.">
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"AboutPage",
+  "name":"À propos — ANNOOR",
+  "publisher":{"@type":"Organization","name":"{{ site_contact.company_name|default:'ANNOOR' }}"}
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<section class="relative">
+  <div class="absolute inset-0 bg-gradient-to-br from-ink-900 to-ink-700"></div>
+  <div class="relative container text-white py-16">
+    <nav class="text-xs opacity-80 mb-3"><a href="/" class="hover:underline">Accueil</a> / <span>À propos</span></nav>
+    <h1 class="text-3xl md:text-5xl font-bold tracking-tight">Notre mission</h1>
+    <p class="mt-3 max-w-2xl text-white/90">Apporter une ingénierie pragmatique et fiable au service de l’industrie et de l’agro-alimentaire, avec un engagement fort sur la qualité, la sécurité et le transfert de compétences.</p>
+  </div>
+</section>
+
+<section class="container py-12 grid md:grid-cols-3 gap-8">
+  <div class="md:col-span-2">
+    <div class="card p-8 space-y-6">
+      <h2 class="text-xl font-semibold">Ce qui nous guide</h2>
+      <p class="text-slate-700">Depuis nos premières installations, nous défendons une approche terrain : comprendre vos contraintes réelles, livrer des lignes robustes et documentées, et former vos équipes pour une autonomie durable.</p>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="rounded-xl border p-4">
+          <div class="text-xs font-semibold text-ink-500">Qualité & sécurité</div>
+          <p class="mt-1 text-sm text-slate-700">Procédures, contrôles, conformité et culture HSE au quotidien.</p>
+        </div>
+        <div class="rounded-xl border p-4">
+          <div class="text-xs font-semibold text-ink-500">Transfert de compétences</div>
+          <p class="mt-1 text-sm text-slate-700">Formation opérationnelle, documentation claire, assistance.</p>
+        </div>
+        <div class="rounded-xl border p-4">
+          <div class="text-xs font-semibold text-ink-500">Performance</div>
+          <p class="mt-1 text-sm text-slate-700">Disponibilité des équipements, rendements, maîtrise des coûts.</p>
+        </div>
+      </div>
+
+      <h3 class="text-lg font-semibold mt-8">Repères</h3>
+      <ul class="mt-2 text-sm text-slate-700 space-y-2">
+        <li>• Projets livrés : {{ settings.stat_1_value|default:"100+" }}</li>
+        <li>• Secteurs : Agro-alimentaire, Industrie, BTP</li>
+        <li>• Zone : Niger & sous-région</li>
+      </ul>
+    </div>
+  </div>
+
+  <aside>
+    <div class="card p-6 md:p-8">
+      <h3 class="text-lg font-semibold">Coordonnées</h3>
+      <ul class="mt-3 text-sm text-slate-700 space-y-1">
+        {% if site_contact.address or site_contact.city or site_contact.country %}
+          <li>{{ site_contact.address }}{% if site_contact.address %},{% endif %} {{ site_contact.city }}{% if site_contact.city and site_contact.country %},{% endif %} {{ site_contact.country }}</li>
+        {% endif %}
+        {% if site_contact.phone %}<li>Tél : {{ site_contact.phone }}</li>{% endif %}
+        {% if site_contact.email %}<li>Email : <a href="mailto:{{ site_contact.email }}" class="hover:underline">{{ site_contact.email }}</a></li>{% endif %}
+        {% if site_contact.whatsapp_url %}<li><a href="{{ site_contact.whatsapp_url }}" class="text-emerald-700 hover:underline" target="_blank" rel="noopener">WhatsApp</a></li>{% endif %}
+      </ul>
+      <div class="mt-5 h-px bg-slate-200"></div>
+      <a href="/contact/" class="btn btn-primary mt-5 w-full justify-center">Nous contacter</a>
+    </div>
+
+    {% if site_contact.map_embed_url %}
+    <div class="card p-0 overflow-hidden mt-6">
+      <iframe src="{{ site_contact.map_embed_url }}" width="100%" height="220" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+    </div>
+    {% endif %}
+  </aside>
+</section>
+{% endblock %}
