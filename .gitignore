@@ -1,0 +1,43 @@
+# Byte-compiled / optimized / compiled files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Database files
+*.sqlite3
+db.sqlite3
+
+# Media and Static files (if generated or uploaded)
+media/
+static/ # if collected static files are not intended for version control
+
+# IDE-specific files
+.idea/ # PyCharm
+.vscode/ # VS Code
+*.sublime-project
+*.sublime-workspace
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Django specific
+local_settings.py # For local environment settings, especially for sensitive data like SECRET_KEY
+*.log
+*.pot
+
+# Test and coverage files
+.coverage
+.tox/
+htmlcov/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
