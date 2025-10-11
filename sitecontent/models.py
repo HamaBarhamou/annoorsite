@@ -118,7 +118,7 @@ class Post(TimeStamped):
         return self.title
 
     def get_absolute_url(self):
-        return reverse("blog_detail", args=[self.slug])
+        return reverse("blog_detail", kwargs={"slug": self.slug})
 
 
 class SiteContact(models.Model):

@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block extra_head %}
+  <meta name="description" content="{{ post.title }}">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"BlogPosting",
+    "headline":"{{ post.title|escapejs }}",
+    "datePublished":"{{ post.pub_date|date:'c' }}",
+    "author":{"@type":"Organization","name":"{{ site_contact.company_name|default:'ANNOOR' }}"}
+  }
+  </script>
+{% endblock %}
+{% block content %}
+
+<section class="relative">
+  {% if post.cover %}
+    <img src="{{ post.cover.url }}" alt="" class="absolute inset-0 w-full h-72 object-cover">
+    <div class="absolute inset-0 h-72 bg-slate-900/60"></div>
+  {% else %}
+    <div class="absolute inset-0 h-40 bg-slate-900"></div>
+  {% endif %}
+  <div class="relative max-w-6xl mx-auto px-4 pt-20 pb-6 text-white">
+    <nav class="text-xs opacity-80 mb-2"><a href="/" class="hover:underline">Accueil</a> / <a href="/blog/" class="hover:underline">Actualités</a> / <span>{{ post.title }}</span></nav>
+    <h1 class="text-3xl md:text-4xl font-bold">{{ post.title }}</h1>
+    <p class="mt-2 opacity-90">{% if post.pub_date %}{{ post.pub_date|date:"d M Y" }}{% endif %}</p>
+  </div>
+</section>
+
+<div class="max-w-3xl mx-auto px-4 py-10">
+  <article class="space-y-6 leading-relaxed text-slate-800">
+    {{ post.body|linebreaks }}
+  </article>
+
+  <div class="mt-10 p-6 rounded border bg-slate-50">
+    <h2 class="text-base font-semibold">Vous avez un projet similaire ?</h2>
+    <a href="/contact/" class="inline-block mt-3 px-4 py-2 rounded bg-orange-500 text-white hover:bg-orange-600 transition text-sm">Nous contacter</a>
+  </div>
+</div>
+{% endblock %}
