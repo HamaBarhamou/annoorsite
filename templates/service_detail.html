@@ -1,31 +1,170 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ service.title }} — ANNOOR{% endblock %}
+
 {% block extra_head %}
   <meta name="description" content="{{ service.excerpt|default:service.title }}">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"Service",
+    "name":"{{ service.title|escapejs }}",
+    "description":"{{ service.excerpt|default:service.title|striptags|truncatechars:160|escapejs }}",
+    "provider":{
+      "@type":"Organization",
+      "name":"{{ site_contact.company_name|default:'ANNOOR'|escapejs }}"
+    }
+  }
+  </script>
 {% endblock %}
+
 {% block content %}
-<section class="relative">
+
+<!-- =========================
+     HERO (cover + overlay + dégradé)
+     ========================= -->
+<section class="relative overflow-hidden">
   {% if service.cover %}
-    <img src="{{ service.cover.url }}" alt="" class="absolute inset-0 w-full h-64 object-cover">
-    <div class="absolute inset-0 h-64 bg-slate-900/60"></div>
+    <img src="{{ service.cover.url }}" alt="" class="absolute inset-0 w-full h-[22rem] object-cover">
+    <div class="absolute inset-0 h-[22rem] bg-gradient-to-b from-ink-900/85 via-ink-900/70 to-ink-900/65"></div>
+    <div class="absolute inset-0 h-[22rem] bg-[radial-gradient(closest-side,rgba(249,115,22,.18),transparent_70%)]"></div>
+  {% else %}
+    <div class="absolute inset-0 h-[18rem] bg-ink-900"></div>
   {% endif %}
-  <div class="relative max-w-6xl mx-auto px-4 pt-16 pb-6 text-white">
-    <nav class="text-xs opacity-80 mb-2"><a href="/" class="hover:underline">Accueil</a> / <a href="/services/" class="hover:underline">Services</a> / <span>{{ service.title }}</span></nav>
-    <h1 class="text-3xl md:text-4xl font-bold">{{ service.title }}</h1>
-    {% if service.excerpt %}
-      <p class="mt-2 max-w-2xl">{{ service.excerpt }}</p>
-    {% endif %}
+
+  <div class="relative container text-white pt-16 pb-6 md:pb-10">
+    <nav class="text-xs opacity-80 mb-2">
+      <a href="/" class="hover:underline">Accueil</a> /
+      <a href="/services/" class="hover:underline">Services</a> /
+      <span>{{ service.title }}</span>
+    </nav>
+
+    <div class="max-w-3xl">
+      <span class="chip chip-sec">Service</span>
+      <h1 class="mt-2 text-3xl md:text-5xl font-extrabold leading-tight heading-accent">
+        {{ service.title }}
+      </h1>
+      {% if service.excerpt %}
+        <p class="mt-3 text-white/90 text-lg">{{ service.excerpt }}</p>
+      {% endif %}
+    </div>
   </div>
 </section>
 
-<div class="max-w-3xl mx-auto px-4 py-10">
-  <article class="space-y-6 leading-relaxed text-slate-700">
-    {{ service.body|linebreaks }}
-  </article>
+<!-- =========================
+     CONTENU + ASIDE
+     ========================= -->
+<section class="container py-10 md:py-14">
+  <div class="grid lg:grid-cols-12 gap-10">
+    <!-- Col. contenu -->
+    <article class="lg:col-span-8">
+      <div class="card p-6 md:p-8">
+        <!-- Corps riche -->
+        <div class="prose prose-slate max-w-none">
+          {# On n'a pas Tailwind Typography en CDN, mais on type légèrement via classes utilitaires #}
+          <div class="space-y-5 leading-relaxed text-slate-700">
+            {{ service.body|linebreaks }}
+          </div>
+        </div>
 
-  <div class="mt-10 p-6 rounded border bg-slate-50">
-    <h2 class="text-xl font-semibold">Besoin d’un devis ?</h2>
-    <p class="text-sm opacity-80 mt-1">Parlez-nous de votre projet, vos délais et vos contraintes.</p>
-    <a href="/contact/" class="inline-block mt-4 px-5 py-2 rounded bg-orange-500 text-white hover:bg-orange-600 transition">Nous contacter</a>
+        <!-- Points clés (facultatif : affiche uniquement si excerpt existe pour le lead) -->
+        {% if service.excerpt %}
+        <div class="mt-8 grid sm:grid-cols-3 gap-4">
+          <div class="rounded-xl border p-4">
+            <div class="text-xs font-semibold tracking-wider text-ink-500">Qualité</div>
+            <p class="mt-1 text-sm text-slate-700">Procédures, essais et conformité documentée (DOE).</p>
+          </div>
+          <div class="rounded-xl border p-4">
+            <div class="text-xs font-semibold tracking-wider text-ink-500">Délais</div>
+            <p class="mt-1 text-sm text-slate-700">Interventions typiques en 24–72h selon criticité.</p>
+          </div>
+          <div class="rounded-xl border p-4">
+            <div class="text-xs font-semibold tracking-wider text-ink-500">Transfert</div>
+            <p class="mt-1 text-sm text-slate-700">Formation opérateurs & maintenance pour l’autonomie.</p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- CTA section (large) -->
+      <div class="mt-6 rounded-2xl bg-ink-900 text-white p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+          <h2 class="text-lg md:text-xl font-semibold">Besoin d’un devis ou d’une étude ?</h2>
+          <p class="text-white/80 text-sm mt-1">Parlez-nous de votre projet, de vos délais et de vos contraintes.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href="/contact/" class="btn btn-primary">Nous contacter</a>
+          <a href="/projects/" class="btn btn-ghost">Voir nos références</a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Col. aside -->
+    <aside class="lg:col-span-4">
+      <!-- Carte contact -->
+      <div class="card p-6 md:p-7 sticky top-[96px]">
+        <h3 class="text-lg font-semibold">Parler à un expert</h3>
+        <ul class="mt-3 text-sm text-slate-700 space-y-1">
+          {% if site_contact.address or site_contact.city or site_contact.country %}
+            <li>
+              {{ site_contact.address }}{% if site_contact.address %},{% endif %}
+              {{ site_contact.city }}{% if site_contact.city and site_contact.country %},{% endif %}
+              {{ site_contact.country }}
+            </li>
+          {% endif %}
+          {% if site_contact.phone %}<li>Tél : {{ site_contact.phone }}</li>{% endif %}
+          {% if site_contact.email %}
+            <li>Email :
+              <a href="mailto:{{ site_contact.email }}" class="hover:underline">{{ site_contact.email }}</a>
+            </li>
+          {% endif %}
+          {% if site_contact.whatsapp_url %}
+            <li class="pt-1">
+              <a href="{{ site_contact.whatsapp_url }}" target="_blank" rel="noopener"
+                 class="inline-flex items-center gap-2 text-secondary-700 hover:underline">
+                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3.5A4.5 4.5 0 0 1 24 8c0 7.732-6.268 14-14 14a13.94 13.94 0 0 1-7-1.88L0 24l3.03-2.94A13.94 13.94 0 0 1 1.88 14C1.88 6.268 8.148 0 15.88 0A4.5 4.5 0 0 1 20 3.5Z"/></svg>
+                 WhatsApp
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+        <a href="/contact/" class="btn btn-secondary w-full justify-center mt-5">Demander un devis</a>
+
+        <!-- Liens rapides -->
+        <div class="mt-6">
+          <div class="text-xs font-semibold tracking-wider text-ink-500">Liens utiles</div>
+          <ul class="mt-2 space-y-2 text-sm">
+            <li><a href="/services/" class="hover:underline">Tous les services</a></li>
+            <li><a href="/projects/" class="hover:underline">Références récentes</a></li>
+            <li><a href="/about/" class="hover:underline">À propos d’ANNOOR</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Autres services (si dispo en contexte) -->
+      {% if other_services %}
+      <div class="mt-6 card p-6 md:p-7">
+        <h3 class="text-lg font-semibold">Autres services</h3>
+        <ul class="mt-3 space-y-3 text-sm">
+          {% for s in other_services %}
+            <li>
+              <a href="{{ s.get_absolute_url }}" class="flex items-start gap-3 group">
+                {% if s.cover %}
+                  <img src="{{ s.cover.url }}" alt="" class="h-10 w-14 object-cover rounded-lg border">
+                {% endif %}
+                <div>
+                  <div class="font-medium group-hover:underline">{{ s.title }}</div>
+                  <p class="text-slate-600 line-clamp-2">{{ s.excerpt|default:s.body|striptags|truncatechars:90 }}</p>
+                </div>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </aside>
   </div>
-</div>
+</section>
+
 {% endblock %}
