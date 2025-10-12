@@ -1,40 +1,147 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ post.title }} — Actualités ANNOOR{% endblock %}
+
 {% block extra_head %}
-  <meta name="description" content="{{ post.title }}">
+  <meta name="description" content="{{ post.body|striptags|truncatechars:160 }}">
+  <!-- Open Graph -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="{{ post.title }}">
+  <meta property="og:description" content="{{ post.body|striptags|truncatechars:160 }}">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  {% if post.cover %}<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.cover.url }}">{% endif %}
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ post.title }}">
+  <meta name="twitter:description" content="{{ post.body|striptags|truncatechars:160 }}">
+  {% if post.cover %}<meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{{ post.cover.url }}">{% endif %}
+
+  <!-- JSON-LD -->
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
     "@type":"BlogPosting",
     "headline":"{{ post.title|escapejs }}",
     "datePublished":"{{ post.pub_date|date:'c' }}",
-    "author":{"@type":"Organization","name":"{{ site_contact.company_name|default:'ANNOOR' }}"}
+    "url":"{{ request.build_absolute_uri|escapejs }}",
+    {% if post.cover %}"image":"{{ request.scheme }}://{{ request.get_host }}{{ post.cover.url }}",{% endif %}
+    "author":{"@type":"Organization","name":"{{ site_contact.company_name|default:'ANNOOR' }}"},
+    "publisher":{"@type":"Organization","name":"{{ site_contact.company_name|default:'ANNOOR' }}"}
   }
   </script>
 {% endblock %}
+
 {% block content %}
 
-<section class="relative">
+<!-- HERO -->
+<section class="relative overflow-hidden">
   {% if post.cover %}
-    <img src="{{ post.cover.url }}" alt="" class="absolute inset-0 w-full h-72 object-cover">
-    <div class="absolute inset-0 h-72 bg-slate-900/60"></div>
+    <img src="{{ post.cover.url }}" alt="" class="absolute inset-0 w-full h-[20rem] md:h-[24rem] object-cover">
+    <div class="absolute inset-0 h-[20rem] md:h-[24rem] bg-gradient-to-b from-ink-900/85 via-ink-900/75 to-ink-900/55"></div>
   {% else %}
-    <div class="absolute inset-0 h-40 bg-slate-900"></div>
+    <div class="absolute inset-0 h-[14rem] md:h-[16rem] bg-ink-900"></div>
+    <div class="absolute inset-0 h-[14rem] md:h-[16rem] bg-[radial-gradient(closest-side,rgba(249,115,22,.18),transparent_70%)]"></div>
   {% endif %}
-  <div class="relative max-w-6xl mx-auto px-4 pt-20 pb-6 text-white">
-    <nav class="text-xs opacity-80 mb-2"><a href="/" class="hover:underline">Accueil</a> / <a href="/blog/" class="hover:underline">Actualités</a> / <span>{{ post.title }}</span></nav>
-    <h1 class="text-3xl md:text-4xl font-bold">{{ post.title }}</h1>
-    <p class="mt-2 opacity-90">{% if post.pub_date %}{{ post.pub_date|date:"d M Y" }}{% endif %}</p>
+
+  <div class="relative container text-white pt-14 pb-6 md:pt-16 md:pb-10">
+    <nav class="text-xs opacity-80 mb-3">
+      <a href="/" class="hover:underline">Accueil</a> /
+      <a href="/blog/" class="hover:underline">Actualités</a> /
+      <span class="opacity-90">Article</span>
+    </nav>
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight heading-accent">{{ post.title }}</h1>
+    <div class="mt-3 flex flex-wrap items-center gap-3 text-white/85 text-sm">
+      {% if post.pub_date %}<span class="px-2 py-0.5 rounded bg-white/10">{{ post.pub_date|date:"d M Y" }}</span>{% endif %}
+      <span class="px-2 py-0.5 rounded bg-white/10">{{ site_contact.company_name|default:"ANNOOR" }}</span>
+    </div>
   </div>
 </section>
 
-<div class="max-w-3xl mx-auto px-4 py-10">
-  <article class="space-y-6 leading-relaxed text-slate-800">
-    {{ post.body|linebreaks }}
+<!-- CONTENU -->
+<section class="container mt-8 md:mt-10 grid md:grid-cols-12 gap-8">
+  <!-- Corps de l’article -->
+  <article class="md:col-span-8 xl:col-span-8">
+    <div class="card p-6 md:p-8">
+      <div class="prose max-w-none prose-p:leading-7 prose-headings:scroll-mt-20">
+        {{ post.body|linebreaks }}
+      </div>
+
+      <!-- Partage -->
+      <div class="mt-8 pt-6 border-t">
+        <div class="flex flex-wrap items-center gap-3 text-sm">
+          <span class="text-slate-600">Partager :</span>
+          {% with u=request.build_absolute_uri t=post.title %}
+            <a class="btn bg-white border hover:bg-slate-50"
+               href="https://www.linkedin.com/sharing/share-offsite/?url={{ u|urlencode }}" target="_blank" rel="noopener">LinkedIn</a>
+            <a class="btn bg-white border hover:bg-slate-50"
+               href="https://twitter.com/intent/tweet?url={{ u|urlencode }}&text={{ t|urlencode }}" target="_blank" rel="noopener">X / Twitter</a>
+            <a class="btn bg-white border hover:bg-slate-50"
+               href="mailto:?subject={{ t|urlencode }}&body={{ u|urlencode }}">Email</a>
+          {% endwith %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation précédent / suivant (optionnelle) -->
+    {% if prev_post or next_post %}
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        {% if prev_post %}
+          <a href="{{ prev_post.get_absolute_url }}" class="card p-5 hover:shadow-xl transition block">
+            <div class="text-xs text-slate-500 mb-1">Article précédent</div>
+            <div class="font-semibold line-clamp-2">{{ prev_post.title }}</div>
+          </a>
+        {% endif %}
+        {% if next_post %}
+          <a href="{{ next_post.get_absolute_url }}" class="card p-5 hover:shadow-xl transition block text-right">
+            <div class="text-xs text-slate-500 mb-1">Article suivant</div>
+            <div class="font-semibold line-clamp-2">{{ next_post.title }}</div>
+          </a>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <!-- CTA -->
+    <div class="mt-8 rounded-2xl bg-ink-900 text-white p-6 md:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h2 class="text-lg font-semibold">Un projet similaire ?</h2>
+        <p class="text-white/85 text-sm">Parlons de votre besoin, vos délais et vos contraintes.</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="/contact/" class="btn btn-primary">Nous contacter</a>
+        <a href="/projects/" class="btn btn-ghost">Voir nos références</a>
+      </div>
+    </div>
   </article>
 
-  <div class="mt-10 p-6 rounded border bg-slate-50">
-    <h2 class="text-base font-semibold">Vous avez un projet similaire ?</h2>
-    <a href="/contact/" class="inline-block mt-3 px-4 py-2 rounded bg-orange-500 text-white hover:bg-orange-600 transition text-sm">Nous contacter</a>
-  </div>
-</div>
+  <!-- Sidebar -->
+  <aside class="md:col-span-4 xl:col-span-4 space-y-6">
+    <!-- Carte société -->
+    <div class="card p-6 md:p-7">
+      <div class="font-semibold">{{ site_contact.company_name|default:"ANNOOR" }}</div>
+      <p class="mt-1 text-sm text-slate-600">Ingénierie • Industriel • Travaux Publics</p>
+      <ul class="mt-4 text-sm text-slate-700 space-y-1">
+        {% if site_contact.email %}<li>Email : <a href="mailto:{{ site_contact.email }}" class="hover:underline">{{ site_contact.email }}</a></li>{% endif %}
+        {% if site_contact.phone %}<li>Tél : <a href="tel:{{ site_contact.phone|urlize }}" class="hover:underline">{{ site_contact.phone }}</a></li>{% endif %}
+        {% if site_contact.whatsapp_url %}<li><a href="{{ site_contact.whatsapp_url }}" class="text-emerald-700 hover:underline" target="_blank" rel="noopener">WhatsApp</a></li>{% endif %}
+      </ul>
+      <a href="/about/" class="mt-4 inline-flex text-sm text-ink-500 hover:underline">À propos d’ANNOOR</a>
+    </div>
+
+    <!-- Articles récents (optionnel : passe recent_posts dans la vue) -->
+    {% if recent_posts %}
+    <div class="card p-6 md:p-7">
+      <div class="font-semibold">Articles récents</div>
+      <ul class="mt-3 space-y-3">
+        {% for rp in recent_posts %}
+          <li class="text-sm">
+            <a class="block hover:underline" href="{{ rp.get_absolute_url }}">{{ rp.title }}</a>
+            {% if rp.pub_date %}<div class="text-xs text-slate-500">{{ rp.pub_date|date:"d M Y" }}</div>{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </aside>
+</section>
+
 {% endblock %}

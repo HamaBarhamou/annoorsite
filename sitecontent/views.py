@@ -152,7 +152,33 @@ def blog_list(request):
 
 def blog_detail(request, slug):
     post = get_object_or_404(Post, slug=slug, published=True)
-    return render(request, "blog_detail.html", {"post": post})
+
+    prev_post = (
+        Post.objects.filter(published=True, pub_date__lt=post.pub_date)
+        .order_by("-pub_date")
+        .first()
+    )
+    next_post = (
+        Post.objects.filter(published=True, pub_date__gt=post.pub_date)
+        .order_by("pub_date")
+        .first()
+    )
+    recent_posts = (
+        Post.objects.filter(published=True)
+        .exclude(pk=post.pk)
+        .order_by("-pub_date")[:5]
+    )
+
+    return render(
+        request,
+        "blog_detail.html",
+        {
+            "post": post,
+            "prev_post": prev_post,
+            "next_post": next_post,
+            "recent_posts": recent_posts,
+        },
+    )
 
 
 def contact(request):
