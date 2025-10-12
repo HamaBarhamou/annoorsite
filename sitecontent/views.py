@@ -7,6 +7,7 @@ from .forms import ContactForm
 def about(request):
     return render(request, "about.html")
 
+
 def home(request):
     settings = HomeSettings.objects.first() or HomeSettings.objects.create()
     services = Service.objects.all()[:6]

@@ -1,55 +1,204 @@
 {% extends 'base.html' %}
 {% block extra_head %}
-<meta name="description" content="À propos d’ANNOOR — ingénierie, installation et maintenance industrielles.">
+<meta name="description" content="À propos d’ANNOOR — ingénierie pragmatique, mise en service fiable, maintenance engagée. Notre histoire, nos valeurs et notre impact.">
 <script type="application/ld+json">
 {
   "@context":"https://schema.org",
   "@type":"AboutPage",
   "name":"À propos — ANNOOR",
-  "publisher":{"@type":"Organization","name":"{{ site_contact.company_name|default:'ANNOOR' }}"}
+  "publisher":{"@type":"Organization","name":"{{ site_contact.company_name|default:'ANNOOR' }}"},
+  "mainEntity":{
+    "@type":"Organization",
+    "name":"{{ site_contact.company_name|default:'ANNOOR' }}",
+    "address":"{{ site_contact.address }} {{ site_contact.city }} {{ site_contact.country }}",
+    "telephone":"{{ site_contact.phone }}",
+    "email":"{{ site_contact.email }}"
+  }
 }
 </script>
 {% endblock %}
 
 {% block content %}
-<section class="relative">
+<!-- HERO narratif -->
+<section class="relative overflow-hidden mb-8 md:mb-10">
   <div class="absolute inset-0 bg-gradient-to-br from-ink-900 to-ink-700"></div>
-  <div class="relative container text-white py-16">
-    <nav class="text-xs opacity-80 mb-3"><a href="/" class="hover:underline">Accueil</a> / <span>À propos</span></nav>
-    <h1 class="text-3xl md:text-5xl font-bold tracking-tight">Notre mission</h1>
-    <p class="mt-3 max-w-2xl text-white/90">Apporter une ingénierie pragmatique et fiable au service de l’industrie et de l’agro-alimentaire, avec un engagement fort sur la qualité, la sécurité et le transfert de compétences.</p>
+  <div class="relative container text-white py-16 md:py-20">
+    <nav class="text-xs opacity-80 mb-4"><a href="/" class="hover:underline">Accueil</a> / <span>À propos</span></nav>
+    <div class="grid md:grid-cols-12 gap-10 items-center">
+      <div class="md:col-span-7">
+        <h1 class="text-3xl md:text-5xl font-extrabold leading-tight">Nous transformons les contraintes terrain en résultats durables</h1>
+        <p class="mt-4 text-white/90 max-w-2xl">Depuis nos premières lignes agro-alimentaires jusqu’aux installations industrielles plus complexes, nous nous engageons sur la fiabilité, la sécurité et le transfert de compétences, pour que la performance reste entre vos mains.</p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href="/contact/" class="btn btn-primary">Démarrer un projet</a>
+          <a href="/projects/" class="btn btn-ghost">Voir nos références</a>
+        </div>
+      </div>
+      <div class="md:col-span-5">
+        <div class="glass rounded-2xl p-6">
+          <h2 class="text-lg font-semibold">En bref</h2>
+          <ul class="mt-4 text-sm space-y-2 text-white/90">
+            <li>• Zone : Niger & sous-région</li>
+            <li>• Secteurs : Agro, Industrie, BTP</li>
+            <li>• Engagements : Qualité, Sécurité, Disponibilité</li>
+          </ul>
+          <div class="mt-5 grid grid-cols-3 gap-3 text-center">
+            <div class="rounded-xl bg-white/10 p-3">
+              <div class="text-2xl font-bold">{{ settings.stat_1_value|default:"100+" }}</div>
+              <div class="text-xs text-white/80">{{ settings.stat_1_label|default:"Projets" }}</div>
+            </div>
+            <div class="rounded-xl bg-white/10 p-3">
+              <div class="text-2xl font-bold">{{ settings.stat_2_value|default:"12+" }}</div>
+              <div class="text-xs text-white/80">{{ settings.stat_2_label|default:"Secteurs" }}</div>
+            </div>
+            <div class="rounded-xl bg-white/10 p-3">
+              <div class="text-2xl font-bold">{{ settings.stat_3_value|default:"95%" }}</div>
+              <div class="text-xs text-white/80">{{ settings.stat_3_label|default:"Satisfaction" }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="container py-12 grid md:grid-cols-3 gap-8">
-  <div class="md:col-span-2">
-    <div class="card p-8 space-y-6">
-      <h2 class="text-xl font-semibold">Ce qui nous guide</h2>
-      <p class="text-slate-700">Depuis nos premières installations, nous défendons une approche terrain : comprendre vos contraintes réelles, livrer des lignes robustes et documentées, et former vos équipes pour une autonomie durable.</p>
-      <div class="grid md:grid-cols-3 gap-4">
-        <div class="rounded-xl border p-4">
-          <div class="text-xs font-semibold text-ink-500">Qualité & sécurité</div>
-          <p class="mt-1 text-sm text-slate-700">Procédures, contrôles, conformité et culture HSE au quotidien.</p>
-        </div>
-        <div class="rounded-xl border p-4">
-          <div class="text-xs font-semibold text-ink-500">Transfert de compétences</div>
-          <p class="mt-1 text-sm text-slate-700">Formation opérationnelle, documentation claire, assistance.</p>
-        </div>
-        <div class="rounded-xl border p-4">
-          <div class="text-xs font-semibold text-ink-500">Performance</div>
-          <p class="mt-1 text-sm text-slate-700">Disponibilité des équipements, rendements, maîtrise des coûts.</p>
-        </div>
+<!-- BANDEAU KPI confiance -->
+<section class="container mt-2 md:mt-4">
+  <div class="card p-5 md:p-6">
+    <div class="grid sm:grid-cols-3 gap-6 text-center">
+      <div>
+        <div class="text-2xl font-bold">+{{ settings.stat_1_value|default:"100" }}</div>
+        <div class="text-sm text-slate-600">Mises en service</div>
       </div>
-
-      <h3 class="text-lg font-semibold mt-8">Repères</h3>
-      <ul class="mt-2 text-sm text-slate-700 space-y-2">
-        <li>• Projets livrés : {{ settings.stat_1_value|default:"100+" }}</li>
-        <li>• Secteurs : Agro-alimentaire, Industrie, BTP</li>
-        <li>• Zone : Niger & sous-région</li>
-      </ul>
+      <div>
+        <div class="text-2xl font-bold">24h–72h</div>
+        <div class="text-sm text-slate-600">Délai d’intervention typique</div>
+      </div>
+      <div>
+        <div class="text-2xl font-bold">ISO / HSE</div>
+        <div class="text-sm text-slate-600">Culture qualités & sécurité</div>
+      </div>
     </div>
   </div>
+</section>
 
+<!-- HISTOIRE (timeline) -->
+<section class="container py-14">
+  <div class="max-w-3xl">
+    <h2 class="text-2xl font-semibold">Une histoire d’exécution et de transfert</h2>
+    <p class="mt-3 text-slate-700">Notre ADN est simple : livrer des lignes robustes, documentées et formées. Chaque jalon a renforcé nos méthodes et notre exigence.</p>
+  </div>
+  <ol class="mt-8 relative border-slate-200">
+    <li class="grid md:grid-cols-8 gap-6 py-6 border-t">
+      <div class="md:col-span-2 text-sm font-semibold text-ink-500">2018–2020</div>
+      <div class="md:col-span-6">
+        <h3 class="font-semibold">Premières lignes agro</h3>
+        <p class="text-slate-700 text-sm mt-1">Mise en service de lignes chips & conditionnement. Structuration des check-lists, de la documentation opérateur et des essais.</p>
+      </div>
+    </li>
+    <li class="grid md:grid-cols-8 gap-6 py-6 border-t">
+      <div class="md:col-span-2 text-sm font-semibold text-ink-500">2021–2023</div>
+      <div class="md:col-span-6">
+        <h3 class="font-semibold">Montée en complexité</h3>
+        <p class="text-slate-700 text-sm mt-1">Utilités, automatisation, HSE, plans de maintenance. Formation renforcée & transferts contextualisés au site.</p>
+      </div>
+    </li>
+    <li class="grid md:grid-cols-8 gap-6 py-6 border-t border-b">
+      <div class="md:col-span-2 text-sm font-semibold text-ink-500">Depuis 2024</div>
+      <div class="md:col-span-6">
+        <h3 class="font-semibold">Standard d’exécution</h3>
+        <p class="text-slate-700 text-sm mt-1">Méthodologie industrialisée : audit ↔ conception ↔ réalisation ↔ transfert. Engagements de disponibilité & support réactif.</p>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<!-- VALEURS (avec icônes) -->
+<section class="container pb-8">
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="card p-6">
+      <div class="flex items-center gap-3">
+        <span class="h-9 w-9 rounded-lg bg-brand/10 flex items-center justify-center">
+          <svg class="h-5 w-5 text-brand" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg>
+        </span>
+        <h3 class="font-semibold">Exigence</h3>
+      </div>
+      <p class="mt-3 text-sm text-slate-700">Procédures, essais, conformité : nous préférons la preuve à la promesse.</p>
+    </div>
+    <div class="card p-6">
+      <div class="flex items-center gap-3">
+        <span class="h-9 w-9 rounded-lg bg-brand/10 flex items-center justify-center">
+          <svg class="h-5 w-5 text-brand" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c5.5 0 10-4.5 10-10S17.5 2 12 2 2 6.5 2 12s4.5 10 10 10zm-1-6 6-6-1.5-1.5L11 12l-2.5-2.5L7 11l4 5z"/></svg>
+        </span>
+        <h3 class="font-semibold">Sécurité</h3>
+      </div>
+      <p class="mt-3 text-sm text-slate-700">Culture HSE, verrouillages opérationnels et documentation claire.</p>
+    </div>
+    <div class="card p-6">
+      <div class="flex items-center gap-3">
+        <span class="h-9 w-9 rounded-lg bg-brand/10 flex items-center justify-center">
+          <svg class="h-5 w-5 text-brand" viewBox="0 0 24 24" fill="currentColor"><path d="M3 12h2a7 7 0 1 0 7-7V3l-4 4 4 4V8a5 5 0 1 1-5 5H3z"/></svg>
+        </span>
+        <h3 class="font-semibold">Transfert</h3>
+      </div>
+      <p class="mt-3 text-sm text-slate-700">Former, écrire, transmettre : l’autonomie client comme critère de succès.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ENCART “Pourquoi nous” + image placeholder -->
+<section class="container py-14">
+  <div class="grid md:grid-cols-2 gap-8 items-center">
+    <div class="order-2 md:order-1">
+      <h2 class="text-2xl font-semibold">Pourquoi ANNOOR&nbsp;?</h2>
+      <ul class="mt-4 space-y-3 text-slate-700">
+        <li class="flex gap-3"><span class="mt-1 h-5 w-5 rounded-full bg-brand/10 flex items-center justify-center"><svg class="h-3.5 w-3.5 text-brand" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17l-3.88-3.88L4 13.41l5 5 11-11-1.41-1.41z"/></svg></span><span>Expertise terrain : solutions adaptées à vos contraintes réelles.</span></li>
+        <li class="flex gap-3"><span class="mt-1 h-5 w-5 rounded-full bg-brand/10 flex items-center justify-center"><svg class="h-3.5 w-3.5 text-brand" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17l-3.88-3.88L4 13.41l5 5 11-11-1.41-1.41z"/></svg></span><span>Livrables clairs : DOE, plans de maintenance, formations opérateurs.</span></li>
+        <li class="flex gap-3"><span class="mt-1 h-5 w-5 rounded-full bg-brand/10 flex items-center justify-center"><svg class="h-3.5 w-3.5 text-brand" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17l-3.88-3.88L4 13.41l5 5 11-11-1.41-1.41z"/></svg></span><span>Engagements de disponibilité & support réactif (24–72h typique).</span></li>
+      </ul>
+      <div class="mt-6 flex gap-3">
+        <a href="/contact/" class="btn btn-primary">Parler à un expert</a>
+        <a href="/services/" class="btn border border-slate-200 hover:bg-slate-50">Nos services</a>
+      </div>
+    </div>
+    <div class="order-1 md:order-2">
+      <div class="relative rounded-2xl overflow-hidden shadow-card border bg-slate-100 aspect-[4/3]">
+        <!-- Placeholder visuel (remplaçable par une vraie image) -->
+        <div class="absolute inset-0 grid place-items-center text-slate-400 text-sm">Image de projet / équipe</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ÉQUIPE DIRECTION (si vous voulez incarner) -->
+<section class="container pb-8">
+  <h2 class="text-2xl font-semibold">Direction & référents</h2>
+  <div class="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% comment %} Remplacez par vos données si vous avez un modèle TeamMember {% endcomment %}
+    <div class="card p-6 text-center">
+      <div class="mx-auto h-20 w-20 rounded-full bg-slate-200"></div>
+      <div class="mt-3 font-semibold">Responsable Ingénierie</div>
+      <div class="text-sm text-slate-600">Procédés & automatisation</div>
+    </div>
+    <div class="card p-6 text-center">
+      <div class="mx-auto h-20 w-20 rounded-full bg-slate-200"></div>
+      <div class="mt-3 font-semibold">Responsable Mise en service</div>
+      <div class="text-sm text-slate-600">Installation & HSE</div>
+    </div>
+    <div class="card p-6 text-center">
+      <div class="mx-auto h-20 w-20 rounded-full bg-slate-200"></div>
+      <div class="mt-3 font-semibold">Service client</div>
+      <div class="text-sm text-slate-600">Support & maintenance</div>
+    </div>
+  </div>
+</section>
+
+<!-- COORDONNÉES + CARTE -->
+<section class="container py-12 grid md:grid-cols-3 gap-8">
+  <div class="md:col-span-2 card p-8">
+    <h3 class="text-xl font-semibold">Travaillons ensemble</h3>
+    <p class="mt-2 text-slate-700">Expliquez votre contexte, vos délais et vos contraintes : nous proposons un plan d’exécution clair et des jalons vérifiables.</p>
+    <a href="/contact/" class="btn btn-primary mt-5">Demander un devis</a>
+  </div>
   <aside>
     <div class="card p-6 md:p-8">
       <h3 class="text-lg font-semibold">Coordonnées</h3>
@@ -64,7 +213,6 @@
       <div class="mt-5 h-px bg-slate-200"></div>
       <a href="/contact/" class="btn btn-primary mt-5 w-full justify-center">Nous contacter</a>
     </div>
-
     {% if site_contact.map_embed_url %}
     <div class="card p-0 overflow-hidden mt-6">
       <iframe src="{{ site_contact.map_embed_url }}" width="100%" height="220" style="border:0;" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
