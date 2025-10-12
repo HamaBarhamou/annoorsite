@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
 
-    <!-- Tailwind CDN (sans build, parfait pour dev / POC) -->
+    <!-- Tailwind CDN (mode sans build) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -19,13 +19,22 @@
           container: { center: true, padding: "1rem" },
           extend: {
             colors: {
-              brand: { DEFAULT: "#f97316", 50:"#FFF7ED", 100:"#FFEDD5", 500:"#f97316", 600:"#ea580c" },
+              brand: { DEFAULT:"#f97316", 50:"#FFF7ED", 100:"#FFEDD5", 200:"#FED7AA", 500:"#f97316", 600:"#ea580c", 700:"#c2410c" },
+              secondary: { DEFAULT:"#10b981", 50:"#ECFDF5", 100:"#D1FAE5", 600:"#059669", 700:"#047857" },
+              accent: { DEFAULT:"#6366f1", 50:"#EEF2FF", 100:"#E0E7FF", 600:"#4f46e5", 700:"#4338ca" },
               ink: { 900:"#0f172a", 700:"#334155", 500:"#64748b" }
             },
             boxShadow: {
-              card: "0 10px 30px -12px rgba(2,8,23,.2)"
+              card: "0 10px 30px -12px rgba(2,8,23,.20)",
+              brand: "0 12px 28px -10px rgba(249,115,22,.35)"
             },
-            borderRadius: { xl: "0.9rem", "2xl": "1.25rem" }
+            borderRadius: { xl:"0.9rem", "2xl":"1.25rem" },
+            backgroundImage: {
+              "grid-slate": "linear-gradient(to right, rgba(15,23,42,.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(15,23,42,.06) 1px, transparent 1px)"
+            },
+            backgroundSize: {
+              "grid-8": "8px 8px"
+            }
           }
         }
       }
@@ -33,16 +42,41 @@
 
     <style>
       :root{ --bg: #0b1220; }
-      body{ font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"; }
-      /* utilitaires */
-      .glass { background: rgba(255,255,255,.06); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.08); }
-      .card { @apply rounded-2xl border border-slate-200 bg-white shadow-card; }
-      .btn { @apply inline-flex items-center gap-2 px-5 py-2.5 rounded-lg font-medium transition; }
-      .btn-primary { @apply bg-brand text-white hover:bg-brand-600; }
-      .btn-ghost { @apply border border-white/20 text-white hover:bg-white/10; }
+      body{
+        font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell,
+          "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji",
+          "Segoe UI Symbol","Noto Color Emoji";
+      }
+
+      /* utilitaires design */
+      .glass { background: rgba(255,255,255,.06); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.10); }
+      .card { /* via CDN on ne peut pas @apply, on garde une classe utilitaire simple: */
+        border-radius: 1.25rem; border:1px solid rgb(226 232 240);
+        background:white; box-shadow: 0 10px 30px -12px rgba(2,8,23,.20);
+      }
+      .btn { display:inline-flex; align-items:center; gap:.5rem; padding:.625rem 1.25rem; border-radius:.75rem; font-weight:500; transition: all .2s; }
+      .btn-primary { background:#f97316; color:#fff; }
+      .btn-primary:hover { background:#ea580c; }
+      .btn-ghost { border:1px solid rgba(255,255,255,.2); color:#fff; }
+      .btn-ghost:hover { background:rgba(255,255,255,.10); }
+      .btn-secondary { background:#10b981; color:#fff; }
+      .btn-secondary:hover { background:#059669; }
+
+      .heading-accent { position:relative; display:inline-block; padding-bottom:.4rem; }
+      .heading-accent::after{
+        content:""; position:absolute; left:0; bottom:0; height:3px; width:72px;
+        background: linear-gradient(90deg,#f97316, #10b981, #6366f1);
+        border-radius: 999px;
+      }
+
+      .chip { display:inline-flex; align-items:center; padding:.25rem .625rem; border-radius:999px; font-size:.75rem; font-weight:600; }
+      .chip-brand { background:#FFEDD5; color:#c2410c; }
+      .chip-sec { background:#D1FAE5; color:#047857; }
+      .chip-acc { background:#E0E7FF; color:#4338ca; }
+
       @media (prefers-reduced-motion:no-preference) {
         .fade-up { opacity:0; transform: translateY(12px); animation:fadeUp .6s ease forwards; }
-        .fade-del-1 { animation-delay:.1s; } .fade-del-2 { animation-delay:.2s; } .fade-del-3 { animation-delay:.3s; }
+        .fade-del-1 { animation-delay:.1s; } .fade-del-2 { animation-delay:.2s; } .fade-del-3 { animation-delay:.3s; } .fade-del-4{animation-delay:.4s;}
       }
       @keyframes fadeUp { to { opacity:1; transform:none; } }
     </style>
@@ -51,7 +85,7 @@
     <!-- Header -->
     {% include "partials/_header.html" %}
 
-    <!-- Main -->
+    <!-- Main (offset pour header sticky) -->
     <main class="min-h-screen pt-[72px] md:pt-[88px]">
       {% block content %}{% endblock %}
     </main>

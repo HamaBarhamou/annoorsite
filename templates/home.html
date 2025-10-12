@@ -1,104 +1,158 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block extra_head %}
-  <meta name="description" content="ANNOOR — Ingénierie, installation et maintenance industrielles. Références au Niger et dans la sous-région.">
+  <meta name="description" content="ANNOOR — Ingénierie pragmatique, mise en service fiable, maintenance engagée. Références au Niger et dans la sous-région.">
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
-    "@type":"WebPage",
-    "name":"Accueil — ANNOOR",
-    "description":"Ingénierie, installation et maintenance industrielles.",
-    "publisher":{"@type":"Organization","name":"ANNOOR"}
+    "@type":"WebSite",
+    "name":"ANNOOR",
+    "url":"{{ request.build_absolute_uri|default:'' }}",
+    "publisher":{"@type":"Organization","name":"{{ site_contact.company_name|default:'ANNOOR' }}"}
   }
   </script>
 {% endblock %}
 
 {% block content %}
 
-<!-- HERO -->
+<!-- =========================
+     HERO narratif + stats colorés
+     ========================= -->
 <section class="relative overflow-hidden">
   {% if settings.hero_bg %}
     <img src="{{ settings.hero_bg.url }}" alt="" class="absolute inset-0 w-full h-full object-cover">
-    <div class="absolute inset-0 bg-gradient-to-b from-ink-900/80 to-ink-900/70"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-ink-900/85 via-ink-900/70 to-ink-900/70"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(closest-side,rgba(249,115,22,.18),transparent_70%)]"></div>
   {% else %}
     <div class="absolute inset-0 bg-ink-900"></div>
   {% endif %}
 
-  <div class="relative container py-24 md:py-32 text-white">
-    <div class="max-w-3xl">
-      <h1 class="text-4xl md:text-6xl font-extrabold leading-tight fade-up">
-        {{ settings.hero_title }}
-      </h1>
-      <p class="mt-4 text-white/90 text-lg fade-up fade-del-1">
-        {{ settings.hero_subtitle }}
-      </p>
-      {% if settings.hero_cta_url and settings.hero_cta_label %}
-      <div class="mt-8 fade-up fade-del-2">
-        <a href="{{ settings.hero_cta_url }}" class="btn btn-primary">{{ settings.hero_cta_label }}</a>
-        <a href="/projects/" class="btn btn-ghost ml-3">Références</a>
+  <div class="relative container text-white py-24 md:py-32">
+    <div class="grid lg:grid-cols-12 gap-10 items-center">
+      <div class="lg:col-span-7">
+        <span class="chip chip-sec">Ingénierie • Mise en service • Maintenance</span>
+        <h1 class="mt-3 text-4xl md:text-6xl font-extrabold leading-tight fade-up heading-accent">
+          {{ settings.hero_title|default:"Transformons vos contraintes terrain en résultats durables" }}
+        </h1>
+        <p class="mt-4 text-white/90 text-lg fade-up fade-del-1">
+          {{ settings.hero_subtitle|default:"Des lignes robustes, documentées et formées. Performance, sécurité et autonomie de vos équipes." }}
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3 fade-up fade-del-2">
+          <a href="{{ settings.hero_cta_url|default:'/contact/' }}" class="btn btn-primary">{{ settings.hero_cta_label|default:"Démarrer un projet" }}</a>
+          <a href="/projects/" class="btn btn-ghost">Voir nos références</a>
+        </div>
       </div>
-      {% endif %}
-    </div>
 
-    <!-- Stats glass -->
-    <div class="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl">
-      <div class="glass rounded-2xl p-5 fade-up"><div class="text-3xl font-bold">{{ settings.stat_1_value }}</div><div class="text-white/80 text-sm">{{ settings.stat_1_label }}</div></div>
-      <div class="glass rounded-2xl p-5 fade-up fade-del-1"><div class="text-3xl font-bold">{{ settings.stat_2_value }}</div><div class="text-white/80 text-sm">{{ settings.stat_2_label }}</div></div>
-      <div class="glass rounded-2xl p-5 fade-up fade-del-2"><div class="text-3xl font-bold">{{ settings.stat_3_value }}</div><div class="text-white/80 text-sm">{{ settings.stat_3_label }}</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- PROMESSES -->
-<section class="container py-14">
-  <div class="grid md:grid-cols-3 gap-6">
-    <div class="card p-6 hover:shadow-xl transition fade-up">
-      <h3 class="text-lg font-semibold">Ingénierie pragmatique</h3>
-      <p class="mt-2 text-slate-600">Études, dimensionnement et choix techniques orientés résultats, avec une forte culture des contraintes terrain.</p>
-    </div>
-    <div class="card p-6 hover:shadow-xl transition fade-up fade-del-1">
-      <h3 class="text-lg font-semibold">Mise en service fiable</h3>
-      <p class="mt-2 text-slate-600">Installation, tests, formation des opérateurs et documentation claire pour une prise en main rapide.</p>
-    </div>
-    <div class="card p-6 hover:shadow-xl transition fade-up fade-del-2">
-      <h3 class="text-lg font-semibold">Maintenance & support</h3>
-      <p class="mt-2 text-slate-600">Plan de maintenance, pièces critiques, assistance réactive et engagements de disponibilité.</p>
-    </div>
-  </div>
-</section>
-
-<!-- SECTEURS -->
-<section class="container pb-8">
-  <div class="card p-8">
-    <div class="flex items-end justify-between">
-      <h2 class="text-2xl font-semibold">Secteurs d’activité</h2>
-    </div>
-    <div class="mt-6 grid md:grid-cols-3 gap-6 text-slate-700">
-      <div class="rounded-xl border p-5 hover:shadow-sm transition">
-        <h3 class="font-semibold">Agro-alimentaire</h3>
-        <p class="mt-1 text-sm">Lignes de transformation (chips, céréales, huiles), contrôle qualité, sécurité alimentaire et optimisation des rendements.</p>
-      </div>
-      <div class="rounded-xl border p-5 hover:shadow-sm transition">
-        <h3 class="font-semibold">Industriel & énergie</h3>
-        <p class="mt-1 text-sm">Process continus, utilités (air, vapeur, eau), automatisation, efficacité énergétique et supervision.</p>
-      </div>
-      <div class="rounded-xl border p-5 hover:shadow-sm transition">
-        <h3 class="font-semibold">BTP & infrastructures</h3>
-        <p class="mt-1 text-sm">Installations techniques, mise aux normes, essais, documentation DOE et transfert de compétences.</p>
+      <!-- KPIs -->
+      <div class="lg:col-span-5">
+        <div class="glass rounded-2xl p-6 md:p-7 fade-up fade-del-3">
+          <h2 class="text-lg font-semibold">Ce que nous engageons</h2>
+          <div class="mt-4 grid grid-cols-3 gap-3 text-center">
+            <div class="rounded-xl bg-white/10 p-4 border border-brand-500/20">
+              <div class="text-2xl font-bold text-brand-100">{{ settings.stat_1_value|default:"100+" }}</div>
+              <div class="text-xs text-white/85">{{ settings.stat_1_label|default:"Projets livrés" }}</div>
+            </div>
+            <div class="rounded-xl bg-white/10 p-4 border border-secondary-500/20">
+              <div class="text-2xl font-bold text-secondary-100">{{ settings.stat_2_value|default:"24–72h" }}</div>
+              <div class="text-xs text-white/85">{{ settings.stat_2_label|default:"Délai d’intervention" }}</div>
+            </div>
+            <div class="rounded-xl bg-white/10 p-4 border border-accent-500/20">
+              <div class="text-2xl font-bold text-accent-100">{{ settings.stat_3_value|default:"95%" }}</div>
+              <div class="text-xs text-white/85">{{ settings.stat_3_label|default:"Satisfaction" }}</div>
+            </div>
+          </div>
+          <p class="mt-4 text-sm text-white/80">Procédures, essais, DOE & plan de maintenance — nous préférons la preuve à la promesse.</p>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- SERVICES -->
+<!-- =========================
+     Bar promesse (dégradé léger)
+     ========================= -->
+<section class="container py-12">
+  <div class="rounded-2xl p-[1px] bg-gradient-to-r from-brand-200 via-secondary-100 to-accent-100">
+    <div class="grid md:grid-cols-3 gap-6 rounded-2xl bg-white/90 p-6">
+      <div class="rounded-xl border p-6 hover:shadow-brand transition">
+        <div class="text-xs font-semibold tracking-wider text-ink-500">01 — Ingénierie pragmatique</div>
+        <h3 class="mt-1 font-semibold">Centrée sur vos contraintes</h3>
+        <p class="mt-2 text-sm text-slate-600">Études, dimensionnement et choix techniques orientés résultats, adaptés au contexte réel de votre site.</p>
+      </div>
+      <div class="rounded-xl border p-6 hover:shadow-brand transition">
+        <div class="text-xs font-semibold tracking-wider text-ink-500">02 — Mise en service</div>
+        <h3 class="mt-1 font-semibold">Robuste, documentée, formée</h3>
+        <p class="mt-2 text-sm text-slate-600">Installation, essais, sécurité, documentation claire et formation des opérateurs.</p>
+      </div>
+      <div class="rounded-xl border p-6 hover:shadow-brand transition">
+        <div class="text-xs font-semibold tracking-wider text-ink-500">03 — Maintenance</div>
+        <h3 class="mt-1 font-semibold">Disponibilité et réactivité</h3>
+        <p class="mt-2 text-sm text-slate-600">Plan de maintenance, pièces critiques, assistance 24–72h et engagements de disponibilité.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================
+     Secteurs + Méthode (2 colonnes)
+     ========================= -->
+<section class="container">
+  <div class="grid lg:grid-cols-2 gap-8">
+    <!-- Secteurs -->
+    <div class="card p-7">
+      <h2 class="text-2xl font-semibold heading-accent">Secteurs d’activité</h2>
+      <div class="mt-5 grid sm:grid-cols-2 gap-5 text-slate-700">
+        <div class="rounded-xl border p-5 hover:border-brand-600/40 hover:shadow-brand transition">
+          <span class="chip chip-brand mb-2">Agro</span>
+          <h3 class="font-semibold">Agro-alimentaire</h3>
+          <p class="mt-1 text-sm">Lignes de transformation (chips, céréales, huiles), qualité et rendements.</p>
+        </div>
+        <div class="rounded-xl border p-5 hover:border-secondary-700/40 hover:shadow-brand transition">
+          <span class="chip chip-sec mb-2">Énergie</span>
+          <h3 class="font-semibold">Industriel & énergie</h3>
+          <p class="mt-1 text-sm">Utilités (air, vapeur, eau), automatisation, efficacité énergétique.</p>
+        </div>
+        <div class="rounded-xl border p-5 hover:border-accent-700/40 hover:shadow-brand transition">
+          <span class="chip chip-acc mb-2">BTP</span>
+          <h3 class="font-semibold">BTP & infrastructures</h3>
+          <p class="mt-1 text-sm">Installations techniques, mise aux normes, DOE & transfert.</p>
+        </div>
+        <div class="rounded-xl border p-5 hover:border-brand-600/40 hover:shadow-brand transition">
+          <span class="chip chip-brand mb-2">Public</span>
+          <h3 class="font-semibold">Services publics</h3>
+          <p class="mt-1 text-sm">Sites critiques, continuité de service, HSE & traçabilité.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Méthode -->
+    <div class="card p-7 bg-gradient-to-br from-accent-50 to-secondary-50">
+      <h2 class="text-2xl font-semibold heading-accent">Notre méthode</h2>
+      <ol class="mt-6 grid md:grid-cols-2 gap-5 text-sm text-slate-700">
+        <li class="rounded-xl border p-4"><div class="text-xs font-semibold text-brand-600">01</div><div class="font-semibold">Diagnostic</div><p class="mt-1">Audit du besoin et des contraintes.</p></li>
+        <li class="rounded-xl border p-4"><div class="text-xs font-semibold text-secondary-700">02</div><div class="font-semibold">Conception</div><p class="mt-1">Études, chiffrage, planning.</p></li>
+        <li class="rounded-xl border p-4"><div class="text-xs font-semibold text-accent-700">03</div><div class="font-semibold">Réalisation</div><p class="mt-1">Installation, essais, conformité.</p></li>
+        <li class="rounded-xl border p-4"><div class="text-xs font-semibold text-brand-700">04</div><div class="font-semibold">Transfert & support</div><p class="mt-1">Formation, pièces, maintenance.</p></li>
+      </ol>
+      <div class="mt-6 flex gap-3">
+        <a href="/contact/" class="btn btn-secondary">Discuter de votre projet</a>
+        <a href="/services/" class="btn border border-slate-200 hover:bg-slate-50">Tous nos services</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================
+     Services (cartes XL)
+     ========================= -->
 <section class="container py-14">
   <div class="flex items-end justify-between gap-4">
-    <h2 class="text-2xl font-semibold">Nos services</h2>
+    <h2 class="text-2xl font-semibold heading-accent">Nos services</h2>
     <a href="/services/" class="text-sm text-ink-500 hover:underline">Voir tous</a>
   </div>
   <div class="mt-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
     {% for s in services %}
-      <a href="{{ s.get_absolute_url }}" class="group card overflow-hidden hover:shadow-xl transition">
+      <a href="{{ s.get_absolute_url }}" class="group card overflow-hidden hover:shadow-brand transition">
         {% if s.cover %}
           <img src="{{ s.cover.url }}" alt="" class="h-52 w-full object-cover group-hover:scale-[1.02] transition">
         {% endif %}
@@ -107,34 +161,55 @@
           <p class="mt-2 text-sm text-slate-600">{{ s.excerpt|default:s.body|truncatechars:140 }}</p>
         </div>
       </a>
+    {% empty %}
+      <div class="text-sm text-slate-600">Les services seront publiés prochainement.</div>
     {% endfor %}
   </div>
 </section>
 
-<!-- MÉTHODE -->
+<!-- =========================
+     Étude de cas (dernier projet)
+     ========================= -->
 <section class="container pb-8">
-  <div class="card p-8">
-    <h2 class="text-2xl font-semibold">Notre méthode</h2>
-    <ol class="mt-6 grid md:grid-cols-4 gap-6 text-sm text-slate-700">
-      <li class="rounded-xl border p-4"><div class="text-xs font-semibold text-ink-500">01</div><div class="font-semibold">Diagnostic</div><p class="mt-1">Audit du besoin et des contraintes.</p></li>
-      <li class="rounded-xl border p-4"><div class="text-xs font-semibold text-ink-500">02</div><div class="font-semibold">Conception</div><p class="mt-1">Études, chiffrage, planning.</p></li>
-      <li class="rounded-xl border p-4"><div class="text-xs font-semibold text-ink-500">03</div><div class="font-semibold">Réalisation</div><p class="mt-1">Installation, essais, conformité.</p></li>
-      <li class="rounded-xl border p-4"><div class="text-xs font-semibold text-ink-500">04</div><div class="font-semibold">Transfert & support</div><p class="mt-1">Formation & maintenance.</p></li>
-    </ol>
-  </div>
+  {% with projects|first as cas %}
+    {% if cas %}
+    <div class="grid lg:grid-cols-2 gap-8 items-center">
+      <div class="order-2 lg:order-1">
+        <span class="chip chip-acc">Étude de cas</span>
+        <h3 class="mt-2 text-2xl font-semibold heading-accent">{{ cas.title }}</h3>
+        <p class="mt-2 text-slate-700">{{ cas.client }}{% if cas.location %} — {{ cas.location }}{% endif %}</p>
+        <p class="mt-3 text-sm text-slate-700">{{ cas.description|default:"Mise en service, tests et transfert opérateur avec engagements de disponibilité."|truncatechars:260 }}</p>
+        <a href="{{ cas.get_absolute_url }}" class="btn btn-primary mt-5">Voir le projet</a>
+      </div>
+      <div class="order-1 lg:order-2">
+        <div class="relative rounded-2xl overflow-hidden shadow-card border bg-gradient-to-br from-brand-50 via-secondary-50 to-accent-50 aspect-[16/10]">
+          {% if cas.cover %}
+            <img src="{{ cas.cover.url }}" alt="" class="absolute inset-0 w-full h-full object-cover mix-blend-multiply">
+          {% elif cas.images.first %}
+            <img src="{{ cas.images.first.image.url }}" alt="" class="absolute inset-0 w-full h-full object-cover mix-blend-multiply">
+          {% else %}
+            <div class="absolute inset-0 grid place-items-center text-slate-400 text-sm">Visuel du projet</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  {% endwith %}
 </section>
 
-<!-- PROJETS -->
+<!-- =========================
+     Projets (carrousel scroll-snap)
+     ========================= -->
 <section class="container py-14">
   <div class="flex items-end justify-between gap-4">
-    <h2 class="text-2xl font-semibold">Projets récents</h2>
+    <h2 class="text-2xl font-semibold heading-accent">Projets récents</h2>
     <a href="/projects/" class="text-sm text-ink-500 hover:underline">Voir toutes les références</a>
   </div>
 
   <div class="mt-6 overflow-x-auto scroll-smooth snap-x snap-mandatory">
     <div class="flex gap-6 pr-4">
       {% for p in projects %}
-        <a href="{{ p.get_absolute_url }}" class="min-w-[320px] max-w-sm snap-start group card overflow-hidden hover:shadow-xl transition">
+        <a href="{{ p.get_absolute_url }}" class="min-w-[320px] max-w-sm snap-start group card overflow-hidden hover:shadow-brand transition">
           {% if p.cover %}
             <img src="{{ p.cover.url }}" alt="" class="h-44 w-full object-cover group-hover:scale-[1.02] transition">
           {% elif p.images.first %}
@@ -145,53 +220,57 @@
             <p class="mt-2 text-sm text-slate-600">{{ p.client }}{% if p.location %} — {{ p.location }}{% endif %}</p>
           </div>
         </a>
+      {% empty %}
+        <div class="text-sm text-slate-600">Les références seront publiées prochainement.</div>
       {% endfor %}
     </div>
   </div>
 </section>
 
-<!-- PARTENAIRES -->
+<!-- =========================
+     Bandeau partenaires (marquee dégradé)
+     ========================= -->
 <section class="container py-10">
-  <h2 class="text-2xl font-semibold mb-6">Ils nous font confiance</h2>
-  <div class="relative overflow-hidden">
-    <div class="flex gap-10 animate-[marquee_25s_linear_infinite] hover:[animation-play-state:paused]">
-      {% for partner in partners %}
-        <div class="flex-none opacity-80 hover:opacity-100 transition">
-          {% if partner.logo %}
-            <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="h-10 object-contain" loading="lazy">
-          {% else %}
-            <span class="text-sm">{{ partner.name }}</span>
-          {% endif %}
-        </div>
-      {% endfor %}
-      {# duplication simple pour boucle infinie #}
-      {% for partner in partners %}
-        <div class="flex-none opacity-80 hover:opacity-100 transition">
-          {% if partner.logo %}
-            <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="h-10 object-contain" loading="lazy">
-          {% else %}
-            <span class="text-sm">{{ partner.name }}</span>
-          {% endif %}
-        </div>
-      {% endfor %}
+  <h2 class="text-2xl font-semibold mb-6 heading-accent">Ils nous font confiance</h2>
+  <div class="relative overflow-hidden rounded-2xl p-[1px] bg-gradient-to-r from-brand-200 via-secondary-100 to-accent-100">
+    <div class="rounded-2xl bg-white">
+      <div class="flex gap-10 items-center px-6 py-4 animate-[marquee_25s_linear_infinite] hover:[animation-play-state:paused]">
+        {% for partner in partners %}
+          <div class="flex-none opacity-80 hover:opacity-100 transition">
+            {% if partner.logo %}
+              <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="h-10 object-contain" loading="lazy">
+            {% else %}
+              <span class="text-sm">{{ partner.name }}</span>
+            {% endif %}
+          </div>
+        {% endfor %}
+        {% for partner in partners %}
+          <div class="flex-none opacity-80 hover:opacity-100 transition">
+            {% if partner.logo %}
+              <img src="{{ partner.logo.url }}" alt="{{ partner.name }}" class="h-10 object-contain" loading="lazy">
+            {% else %}
+              <span class="text-sm">{{ partner.name }}</span>
+            {% endif %}
+          </div>
+        {% endfor %}
+      </div>
     </div>
   </div>
-  <style>
-    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  </style>
+  <style>@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}</style>
 </section>
 
-
-<!-- ACTUALITÉS (si disponibles) -->
+<!-- =========================
+     Actualités (si disponibles)
+     ========================= -->
 {% if posts %}
 <section class="container py-14">
   <div class="flex items-end justify-between gap-4">
-    <h2 class="text-2xl font-semibold">Actualités</h2>
+    <h2 class="text-2xl font-semibold heading-accent">Actualités</h2>
     <a href="/blog/" class="text-sm text-ink-500 hover:underline">Voir toutes</a>
   </div>
   <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
     {% for post in posts %}
-      <a href="{{ post.get_absolute_url }}" class="group card overflow-hidden hover:shadow-xl transition">
+      <a href="{{ post.get_absolute_url }}" class="group card overflow-hidden hover:shadow-brand transition">
         {% if post.cover %}
           <img src="{{ post.cover.url }}" alt="" class="h-44 w-full object-cover group-hover:scale-[1.02] transition">
         {% endif %}
@@ -206,7 +285,9 @@
 </section>
 {% endif %}
 
-<!-- CTA FINAL -->
+<!-- =========================
+     CTA final
+     ========================= -->
 <section class="container py-14" id="contact">
   <div class="rounded-2xl bg-ink-900 text-white p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
     <div>
