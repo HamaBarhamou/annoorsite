@@ -1,12 +1,142 @@
-{# services_list.html #}
+{# templates/services_list.html #}
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Nos services — ANNOOR{% endblock %}
+
+{% block extra_head %}
+  <meta name="description" content="Ingénierie, installation, mise en service et maintenance : découvrez les services ANNOOR.">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"ItemList",
+    "name":"Services ANNOOR",
+    "itemListElement":[
+      {% for s in services %}
+      {
+        "@type":"ListItem",
+        "position": {{ forloop.counter }},
+        "url": "{{ request.scheme }}://{{ request.get_host }}{{ s.get_absolute_url }}",
+        "name":"{{ s.title|escapejs }}"
+      }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ]
+  }
+  </script>
+{% endblock %}
+
 {% block content %}
-<div class="max-w-6xl mx-auto px-4 py-12 grid md:grid-cols-3 gap-6">
-{% for s in services %}
-<a href="{{ s.get_absolute_url }}" class="border rounded p-5 hover:shadow">
-<div class="text-lg font-semibold">{{ s.title }}</div>
-<p class="mt-2 text-sm opacity-80">{{ s.excerpt|truncatechars:160 }}</p>
-</a>
-{% endfor %}
-</div>
+
+<!-- HERO -->
+<section class="relative overflow-hidden">
+  <div class="absolute inset-0 h-[16rem] bg-gradient-to-b from-ink-900 via-ink-900/90 to-ink-900/75"></div>
+  <div class="absolute inset-0 h-[16rem] bg-[radial-gradient(closest-side,rgba(59,130,246,.18),transparent_70%)]"></div>
+  <div class="relative container text-white pt-14 md:pt-16 pb-12 md:pb-14">
+    <nav class="text-xs opacity-80 mb-2">
+      <a href="/" class="hover:underline">Accueil</a> / <span>Services</span>
+    </nav>
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight heading-accent">Nos services</h1>
+    <p class="mt-2 max-w-2xl text-white/90">Études, mise en service, maintenance et accompagnement opérationnel pour des installations fiables et performantes.</p>
+  </div>
+</section>
+
+<!-- BARRE OUTILS (recherche + tri) -->
+<section class="container mt-4 md:mt-6">
+  <form method="get" class="card p-4 md:p-5">
+    <div class="flex flex-col md:flex-row md:items-center gap-3">
+      <!-- Recherche -->
+      <label class="relative flex-1">
+        <span class="sr-only">Recherche</span>
+        <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Rechercher un service (titre, mots-clés)…"
+               class="w-full rounded-lg border-slate-300 pl-9 pr-3 py-2.5 focus:border-brand focus:ring-brand">
+        <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="currentColor"><path d="M21 20l-5.2-5.2a7 7 0 1 0-1 1L20 21zM4 10a6 6 0 1 1 12 0A6 6 0 0 1 4 10z"/></svg>
+      </label>
+
+      <!-- Tri -->
+      <label class="md:ml-auto">
+        <span class="sr-only">Trier</span>
+        <select name="sort" class="rounded-lg border-slate-300 py-2.5 px-3 focus:border-brand focus:ring-brand">
+          <option value="">Tri recommandé</option>
+          <option value="title" {% if request.GET.sort == "title" %}selected{% endif %}>Titre A→Z</option>
+          <option value="-updated" {% if request.GET.sort == "-updated" %}selected{% endif %}>Mises à jour récentes</option>
+        </select>
+      </label>
+
+      <div class="flex gap-2 md:ml-1">
+        <button type="submit" class="btn btn-primary">Appliquer</button>
+        {% if request.GET.q or request.GET.sort %}
+          <a href="{% url 'services_list' %}" class="btn bg-white border text-slate-700 hover:bg-slate-50">Réinitialiser</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Chips d’état des filtres -->
+    {% if request.GET.q %}
+      <div class="mt-3 flex flex-wrap gap-2 text-xs">
+        <span class="inline-flex items-center gap-1 rounded-full border px-2.5 py-1 bg-brand/10 border-brand/20 text-brand-600">
+          Recherche : “{{ request.GET.q }}”
+        </span>
+      </div>
+    {% endif %}
+  </form>
+</section>
+
+<!-- LISTE DES SERVICES -->
+<section class="container py-8 md:py-10">
+  {% if services %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+      {% for s in services %}
+        <a href="{{ s.get_absolute_url }}" class="group card overflow-hidden hover:shadow-xl transition">
+          {% if s.cover %}
+            <img src="{{ s.cover.url }}" alt="" loading="lazy"
+                 class="h-48 w-full object-cover group-hover:scale-[1.02] transition">
+          {% endif %}
+          <div class="p-6">
+            <div class="flex items-start justify-between gap-3">
+              <h2 class="text-lg font-semibold group-hover:underline">{{ s.title }}</h2>
+              <span class="inline-flex items-center rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 text-[11px]">Service</span>
+            </div>
+            {% if s.excerpt %}
+              <p class="mt-2 text-sm text-slate-600 line-clamp-3">{{ s.excerpt }}</p>
+            {% else %}
+              <p class="mt-2 text-sm text-slate-600 line-clamp-3">{{ s.body|striptags|truncatechars:160 }}</p>
+            {% endif %}
+            <div class="mt-4 flex items-center justify-between text-sm">
+              <span class="text-slate-500">Dernière maj : {{ s.updated|date:"d/m/Y" }}</span>
+              <span class="inline-flex items-center gap-1 text-brand hover:underline">
+                En savoir plus
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M13 5l7 7-7 7M5 12h14"/></svg>
+              </span>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <!-- État vide -->
+    <div class="card p-8 text-center">
+      <h2 class="text-lg font-semibold">Aucun service trouvé</h2>
+      <p class="mt-1 text-slate-600">Essayez un autre mot-clé ou réinitialisez les filtres.</p>
+      <div class="mt-4 flex items-center justify-center gap-3">
+        <a href="{% url 'services_list' %}" class="btn bg-white border hover:bg-slate-50">Réinitialiser</a>
+        <a href="/contact/" class="btn btn-primary">Parler à un expert</a>
+      </div>
+    </div>
+  {% endif %}
+</section>
+
+<!-- CTA -->
+<section class="container pb-14">
+  <div class="rounded-2xl bg-gradient-to-r from-brand to-orange-600 text-white p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6 shadow-card">
+    <div>
+      <h3 class="text-xl font-semibold">Vous avez un besoin précis ?</h3>
+      <p class="mt-1 text-white/90">Décrivez votre contexte, vos délais et vos contraintes — on vous répond rapidement.</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <a href="/contact/" class="btn bg-white text-brand hover:bg-white/90">Demander un devis</a>
+      <a href="/projects/" class="btn btn-ghost border-white/30">Voir nos références</a>
+    </div>
+  </div>
+</section>
+
 {% endblock %}

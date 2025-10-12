@@ -30,7 +30,22 @@ def home(request):
 
 
 def services_list(request):
-    return render(request, "services_list.html", {"services": Service.objects.all()})
+    qs = Service.objects.all()
+
+    q = (request.GET.get("q") or "").strip()
+    sort = (request.GET.get("sort") or "").strip()
+
+    if q:
+        qs = qs.filter(
+            Q(title__icontains=q) | Q(excerpt__icontains=q) | Q(body__icontains=q)
+        )
+
+    if sort in {"title", "-updated"}:
+        qs = qs.order_by(sort)
+    else:
+        qs = qs.order_by("title")
+
+    return render(request, "services_list.html", {"services": qs})
 
 
 def service_detail(request, slug):
