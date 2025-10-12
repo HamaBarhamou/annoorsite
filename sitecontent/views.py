@@ -119,8 +119,34 @@ def partners_view(request):
 
 
 def blog_list(request):
+    qs = Post.objects.filter(published=True)
+
+    q = (request.GET.get("q") or "").strip()
+    year = (request.GET.get("year") or "").strip()
+    sort = (request.GET.get("sort") or "").strip()
+
+    if q:
+        qs = qs.filter(Q(title__icontains=q) | Q(body__icontains=q))
+
+    if year.isdigit():
+        qs = qs.filter(pub_date__year=int(year))
+
+    # Tri autorisé
+    allowed_sorts = {"-pub_date", "pub_date", "title"}
+    if sort in allowed_sorts:
+        qs = qs.order_by(sort)
+
+    paginator = Paginator(qs, 9)  # 9 cartes par page
+    page_obj = paginator.get_page(request.GET.get("page"))
+
     return render(
-        request, "blog_list.html", {"posts": Post.objects.filter(published=True)}
+        request,
+        "blog_list.html",
+        {
+            "posts": page_obj.object_list,
+            "page_obj": page_obj,
+            "is_paginated": page_obj.has_other_pages(),
+        },
     )
 
 

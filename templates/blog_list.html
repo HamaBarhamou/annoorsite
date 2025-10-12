@@ -1,37 +1,109 @@
+{# templates/blog_list.html #}
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Actualités & Insights — ANNOOR{% endblock %}
+
 {% block extra_head %}
-  <meta name="description" content="Actualités & insights — ANNOOR">
+  <meta name="description" content="Actualités, mises en service et points d’expertise d’ANNOOR.">
   <script type="application/ld+json">
   {
     "@context":"https://schema.org",
-    "@type":"Blog",
-    "name":"Actualités — ANNOOR"
+    "@type":"ItemList",
+    "name":"Actualités — ANNOOR",
+    "itemListElement":[
+      {% for post in posts %}
+      {
+        "@type":"ListItem",
+        "position": {{ forloop.counter }},
+        "url": "{{ request.scheme }}://{{ request.get_host }}{% url 'blog_detail' slug=post.slug %}",
+        "name":"{{ post.title|escapejs }}"
+      }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ]
   }
   </script>
 {% endblock %}
+
 {% block content %}
 
-<section class="relative">
-  <div class="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-800"></div>
-  <div class="relative max-w-6xl mx-auto px-4 py-16 text-white">
-    <nav class="text-xs opacity-80 mb-3"><a href="/" class="hover:underline">Accueil</a> / <span>Actualités</span></nav>
-    <h1 class="text-3xl md:text-5xl font-bold tracking-tight">Actualités</h1>
-    <p class="mt-3 max-w-2xl text-white/90">Nos mises en service, projets, et points d’expertise.</p>
+<!-- HERO -->
+<section class="relative overflow-hidden">
+  <div class="absolute inset-0 h-[18rem] bg-gradient-to-b from-ink-900 via-ink-900/90 to-ink-900/75"></div>
+  <div class="absolute inset-0 h-[18rem] bg-[radial-gradient(closest-side,rgba(249,115,22,.18),transparent_70%)]"></div>
+  <div class="relative container text-white pt-12 pb-8">
+    <nav class="text-xs opacity-80 mb-2">
+      <a href="/" class="hover:underline">Accueil</a> / <span>Actualités</span>
+    </nav>
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight heading-accent">Actualités & insights</h1>
+    <p class="mt-2 max-w-2xl text-white/90">Mises en service, retours d’expérience et expertise terrain.</p>
   </div>
 </section>
 
-<div class="max-w-6xl mx-auto px-4 py-12">
+<!-- Barre d’outils (recherche + année + tri) — espacement FIXÉ -->
+<section class="container mt-8 md:mt-10">
+  <form method="get" class="card p-4 md:p-5">
+    <div class="flex flex-col md:flex-row md:items-center gap-3">
+
+      <!-- Recherche -->
+      <label class="relative flex-1">
+        <span class="sr-only">Recherche</span>
+        <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Rechercher un article (titre, mots-clés)…"
+               class="w-full rounded-lg border-slate-300 pl-9 pr-3 py-2.5 focus:border-brand focus:ring-brand">
+        <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="currentColor"><path d="M21 20l-5.2-5.2a7 7 0 1 0-1 1L20 21zM4 10a6 6 0 1 1 12 0A6 6 0 0 1 4 10z"/></svg>
+      </label>
+
+      <!-- Année -->
+      <input type="text" name="year" value="{{ request.GET.year }}" placeholder="Année"
+             class="rounded-lg border-slate-300 py-2.5 px-3 focus:border-brand focus:ring-brand w-full md:w-40">
+
+      <!-- Tri -->
+      <label class="md:ml-auto">
+        <span class="sr-only">Trier</span>
+        <select name="sort" class="rounded-lg border-slate-300 py-2.5 px-3 focus:border-brand focus:ring-brand w-full md:w-44">
+          <option value="">Tri recommandé</option>
+          <option value="-pub_date" {% if request.GET.sort == "-pub_date" %}selected{% endif %}>Plus récents</option>
+          <option value="pub_date" {% if request.GET.sort == "pub_date" %}selected{% endif %}>Plus anciens</option>
+          <option value="title" {% if request.GET.sort == "title" %}selected{% endif %}>Titre A→Z</option>
+        </select>
+      </label>
+
+      <div class="flex gap-2 md:ml-1">
+        <button type="submit" class="btn btn-primary">Appliquer</button>
+        {% if request.GET.q or request.GET.year or request.GET.sort %}
+          <a href="{% url 'blog_list' %}" class="btn bg-white border text-slate-700 hover:bg-slate-50">Réinitialiser</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Chips état des filtres -->
+    {% if request.GET.q or request.GET.year %}
+      <div class="mt-3 flex flex-wrap gap-2 text-xs">
+        {% if request.GET.q %}<span class="chip chip-brand">Recherche : “{{ request.GET.q }}”</span>{% endif %}
+        {% if request.GET.year %}<span class="chip">Année : {{ request.GET.year }}</span>{% endif %}
+      </div>
+    {% endif %}
+  </form>
+</section>
+
+<!-- Liste des articles -->
+<section class="container py-8 md:py-10">
   {% if posts %}
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       {% for post in posts %}
-        <a href="{% url 'blog_detail' slug=post.slug %}" class="group rounded-xl overflow-hidden border bg-white hover:shadow transition">
+        <a href="{% url 'blog_detail' slug=post.slug %}" class="group card overflow-hidden hover:shadow-xl transition">
           {% if post.cover %}
-            <img src="{{ post.cover.url }}" alt="" class="h-40 w-full object-cover group-hover:scale-[1.02] transition">
+            <img src="{{ post.cover.url }}" alt="" loading="lazy"
+                 class="h-48 w-full object-cover group-hover:scale-[1.02] transition">
+          {% else %}
+            <div class="h-48 w-full bg-slate-100 grid place-content-center text-slate-400">Aperçu indisponible</div>
           {% endif %}
           <div class="p-5">
             <div class="text-xs text-slate-500">
               {% if post.pub_date %}{{ post.pub_date|date:"d M Y" }}{% endif %}
-              {% if not post.published %}<span class="ml-2 px-2 py-0.5 rounded bg-amber-100 text-amber-800">Brouillon</span>{% endif %}
+              {% if not post.published %}
+                <span class="ml-2 px-2 py-0.5 rounded bg-amber-100 text-amber-800">Brouillon</span>
+              {% endif %}
             </div>
             <h2 class="mt-1 text-lg font-semibold group-hover:underline">{{ post.title }}</h2>
             {% if post.body %}
@@ -42,22 +114,37 @@
       {% endfor %}
     </div>
 
-    {# Pagination si fournie par la vue #}
-    {% if is_paginated or page_obj %}
-      <div class="mt-8 flex items-center justify-center gap-2">
-        {% if page_obj.has_previous %}
-          <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 rounded border hover:bg-slate-50">Préc.</a>
-        {% endif %}
-        <span class="px-3 py-1 text-sm text-slate-600">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
-        {% if page_obj.has_next %}
-          <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 rounded border hover:bg-slate-50">Suiv.</a>
-        {% endif %}
+    {% if page_obj %}
+      <div class="mt-8 flex items-center justify-between text-sm">
+        <div class="text-slate-600">Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</div>
+        <div class="flex items-center gap-2">
+          {% if page_obj.has_previous %}
+            <a class="btn bg-white border hover:bg-slate-50"
+               href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&amp;{% endif %}
+                      {% if request.GET.year %}year={{ request.GET.year|urlencode }}&amp;{% endif %}
+                      {% if request.GET.sort %}sort={{ request.GET.sort|urlencode }}&amp;{% endif %}
+                      page={{ page_obj.previous_page_number }}">Précédent</a>
+          {% endif %}
+          {% if page_obj.has_next %}
+            <a class="btn btn-primary"
+               href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&amp;{% endif %}
+                      {% if request.GET.year %}year={{ request.GET.year|urlencode }}&amp;{% endif %}
+                      {% if request.GET.sort %}sort={{ request.GET.sort|urlencode }}&amp;{% endif %}
+                      page={{ page_obj.next_page_number }}">Suivant</a>
+          {% endif %}
+        </div>
       </div>
     {% endif %}
   {% else %}
-    <div class="rounded-xl border bg-white p-8 text-slate-600">
-      Aucun article pour le moment.
+    <div class="card p-8 text-center">
+      <h2 class="text-lg font-semibold">Aucun article trouvé</h2>
+      <p class="mt-1 text-slate-600">Essayez d’élargir la recherche ou l’année.</p>
+      <div class="mt-4 flex items-center justify-center gap-3">
+        <a href="{% url 'blog_list' %}" class="btn bg-white border hover:bg-slate-50">Réinitialiser</a>
+        <a href="/contact/" class="btn btn-primary">Proposer un sujet</a>
+      </div>
     </div>
   {% endif %}
-</div>
+</section>
+
 {% endblock %}
