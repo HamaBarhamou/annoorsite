@@ -24,14 +24,15 @@
   </script>
 {% endblock %}
 
-
 {% block content %}
 
 <!-- HERO -->
 <section class="relative overflow-hidden">
   <div class="absolute inset-0 h-[16rem] bg-gradient-to-b from-ink-900 via-ink-900/90 to-ink-900/75"></div>
   <div class="absolute inset-0 h-[16rem] bg-[radial-gradient(closest-side,rgba(249,115,22,.18),transparent_70%)]"></div>
-  <div class="relative container text-white pt-12 pb-8">
+
+  <!-- ↑ On augmente le padding bas pour dégager la zone sous le header -->
+  <div class="relative container text-white pt-14 md:pt-16 pb-12 md:pb-14">
     <nav class="text-xs opacity-80 mb-2">
       <a href="/" class="hover:underline">Accueil</a> / <span>Références & projets</span>
     </nav>
@@ -41,7 +42,8 @@
 </section>
 
 <!-- BARRE OUTILS (recherche + filtres + tri) -->
-<section class="container -mt-6 md:-mt-8">
+<!-- ↓ On retire les marges négatives, on met un espacement positif -->
+<section class="container mt-4 md:mt-6">
   <form method="get" class="card p-4 md:p-5">
     <div class="flex flex-col md:flex-row md:items-center gap-3">
 
@@ -124,7 +126,6 @@
       {% endfor %}
     </div>
 
-    <!-- Pagination (si fournie par la vue) -->
     {% if page_obj %}
       <div class="mt-8 flex items-center justify-between text-sm">
         <div class="text-slate-600">
@@ -153,7 +154,6 @@
       </div>
     {% endif %}
   {% else %}
-    <!-- État vide -->
     <div class="card p-8 text-center">
       <h2 class="text-lg font-semibold">Aucun projet trouvé</h2>
       <p class="mt-1 text-slate-600">Essayez d’élargir les filtres ou la recherche.</p>
