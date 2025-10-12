@@ -1,22 +1,48 @@
-<footer class="border-t mt-16">
-  <div class="max-w-6xl mx-auto px-4 py-10 grid md:grid-cols-4 gap-8 text-sm">
+<footer class="mt-16 bg-ink-900 text-white">
+  <!-- Top band -->
+  <div class="bg-gradient-to-r from-brand to-orange-600">
+    <div class="container py-3 text-sm flex items-center justify-between">
+      <span class="font-medium">Besoin d’un devis rapide ?</span>
+      <div class="flex items-center gap-2">
+        <a href="/contact/" class="btn bg-white text-brand hover:bg-white/90">Nous contacter</a>
+        {% if request.user.is_authenticated and request.user.is_staff %}
+          <a href="{% url 'admin:index' %}" class="btn btn-ghost border-white/30">Admin</a>
+        {% else %}
+          <a href="{% url 'admin:login' %}" class="btn btn-ghost border-white/30">Admin</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
 
+  <!-- Main -->
+  <div class="container py-12 grid gap-10 md:grid-cols-4 text-sm">
     <!-- Identité -->
     <div>
-      <div class="font-semibold">{{ site_contact.company_name|default:"ANNOOR" }}</div>
-      <p class="mt-2 text-slate-600">Ingénierie • Industriel • Travaux Publics</p>
+      <div class="flex items-center gap-2">
+        <span class="inline-block h-7 w-7 rounded bg-brand"></span>
+        <div class="text-lg font-semibold">{{ site_contact.company_name|default:"ANNOOR" }}</div>
+      </div>
+      <p class="mt-3 text-white/70">Ingénierie • Industriel • Travaux Publics<br>Installations, mise en service & maintenance.</p>
 
-      {# Réseaux sociaux si présents #}
       {% if site_contact.facebook or site_contact.linkedin or site_contact.x_twitter %}
-      <div class="mt-3 flex items-center gap-3 text-slate-600">
+      <div class="mt-4 flex items-center gap-3">
         {% if site_contact.facebook %}
-          <a href="{{ site_contact.facebook }}" target="_blank" rel="noopener" class="hover:underline">Facebook</a>
+          <a href="{{ site_contact.facebook }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-white/80 hover:text-white">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M13 22v-8h3l1-4h-4V7.5c0-1.1.4-2 2-2h2V2.1C16.7 2 15.4 2 14 2 11.3 2 9.5 3.7 9.5 6.8V10H6v4h3v8h4Z"/></svg>
+            Facebook
+          </a>
         {% endif %}
         {% if site_contact.linkedin %}
-          <a href="{{ site_contact.linkedin }}" target="_blank" rel="noopener" class="hover:underline">LinkedIn</a>
+          <a href="{{ site_contact.linkedin }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-white/80 hover:text-white">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M6.94 6.5A2.19 2.19 0 1 1 4.75 4.3 2.19 2.19 0 0 1 6.94 6.5ZM4.9 20h4.1V9H4.9Zm7.05 0h4.1v-6c0-1.54.29-3 2.24-3 1.92 0 1.95 1.8 1.95 3.08V20h4.1v-6.7c0-3.62-1-6.3-4.99-6.3-2 0-3.34 1.1-3.88 2.15h-.06V9H11.95Z"/></svg>
+            LinkedIn
+          </a>
         {% endif %}
         {% if site_contact.x_twitter %}
-          <a href="{{ site_contact.x_twitter }}" target="_blank" rel="noopener" class="hover:underline">X</a>
+          <a href="{{ site_contact.x_twitter }}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-white/80 hover:text-white">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2H21l-6.49 7.41L22 22h-6.828l-4.73-6.17L4.88 22H2.12l6.93-7.91L2 2h6.914l4.29 5.72L18.244 2Zm-2.393 18h2.03L8.26 4h-2.1Z"/></svg>
+            X / Twitter
+          </a>
         {% endif %}
       </div>
       {% endif %}
@@ -24,8 +50,8 @@
 
     <!-- Contact -->
     <div>
-      <div class="font-semibold">Contact</div>
-      <ul class="mt-2 space-y-1 text-slate-600">
+      <div class="text-white font-semibold">Contact</div>
+      <ul class="mt-3 space-y-1 text-white/80">
         {% if site_contact.address or site_contact.city or site_contact.country %}
           <li>
             {{ site_contact.address }}{% if site_contact.address %},{% endif %}
@@ -34,41 +60,48 @@
           </li>
         {% endif %}
         {% if site_contact.phone %}
-          <li>Tél : <a href="tel:{{ site_contact.phone|urlize }}" class="hover:underline">{{ site_contact.phone }}</a></li>
+          <li>Tél : <a href="tel:{{ site_contact.phone|cut:' ' }}" class="hover:underline text-white">{{ site_contact.phone }}</a></li>
         {% endif %}
         {% if site_contact.email %}
-          <li>Email : <a href="mailto:{{ site_contact.email }}" class="hover:underline">{{ site_contact.email }}</a></li>
+          <li>Email : <a href="mailto:{{ site_contact.email }}" class="hover:underline text-white">{{ site_contact.email }}</a></li>
         {% endif %}
         {% if site_contact.whatsapp_url %}
-          <li><a href="{{ site_contact.whatsapp_url }}" target="_blank" rel="noopener" class="text-emerald-700 hover:underline">WhatsApp</a></li>
+          <li>
+            <a href="{{ site_contact.whatsapp_url }}" target="_blank" rel="noopener"
+               class="inline-flex items-center gap-2 text-emerald-300 hover:text-emerald-200">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3.5A4.5 4.5 0 0 1 24 8c0 7.732-6.268 14-14 14a13.94 13.94 0 0 1-7-1.88L0 24l3.03-2.94A13.94 13.94 0 0 1 1.88 14C1.88 6.268 8.148 0 15.88 0A4.5 4.5 0 0 1 20 3.5Z"/></svg>
+              WhatsApp
+            </a>
+          </li>
         {% endif %}
         {% if site_contact.website %}
-          <li><a href="{{ site_contact.website }}" target="_blank" rel="noopener" class="hover:underline">Site web</a></li>
+          <li><a href="{{ site_contact.website }}" target="_blank" rel="noopener" class="hover:underline text-white">Site web</a></li>
         {% endif %}
       </ul>
     </div>
 
     <!-- Liens -->
     <div>
-      <div class="font-semibold">Liens</div>
-      <ul class="mt-2 space-y-1 text-slate-600">
+      <div class="text-white font-semibold">Liens</div>
+      <ul class="mt-3 space-y-1 text-white/80">
         <li><a href="/services/" class="hover:underline">Services</a></li>
         <li><a href="/projects/" class="hover:underline">Références</a></li>
         <li><a href="/blog/" class="hover:underline">Actualités</a></li>
+        <li><a href="/about/" class="hover:underline">À propos</a></li>
         <li><a href="/contact/" class="hover:underline">Demander un devis</a></li>
       </ul>
     </div>
 
-    <!-- Légal / Carte (optionnelle) -->
+    <!-- Légal + Carte -->
     <div>
-      <div class="font-semibold">Légal</div>
-      <ul class="mt-2 space-y-1 text-slate-600">
+      <div class="text-white font-semibold">Légal</div>
+      <ul class="mt-3 space-y-1 text-white/80">
         <li><a href="#" class="hover:underline">Mentions légales</a></li>
         <li><a href="#" class="hover:underline">Politique de confidentialité</a></li>
       </ul>
 
       {% if site_contact.map_embed_url %}
-      <div class="mt-4 rounded overflow-hidden border">
+      <div class="mt-4 rounded-xl overflow-hidden border border-white/10 shadow-card">
         <iframe
           src="{{ site_contact.map_embed_url }}"
           width="100%" height="140" style="border:0;" allowfullscreen=""
@@ -78,10 +111,28 @@
     </div>
   </div>
 
-  <div class="border-t">
-    <div class="max-w-6xl mx-auto px-4 py-4 text-xs text-slate-500 flex items-center justify-between">
-      <span>© {{ now|date:"Y" }} {{ site_contact.company_name|default:"ANNOOR" }} — Tous droits réservés</span>
-      <span>RCCM/NIF : …</span>
+  <!-- Bottom -->
+  <div class="border-t border-white/10">
+    <div class="container py-4 text-xs text-white/70 flex flex-col md:flex-row gap-2 md:gap-0 md:items-center md:justify-between">
+      <div>© {{ now|date:"Y" }} {{ site_contact.company_name|default:"ANNOOR" }} — Tous droits réservés</div>
+      <div>RCCM/NIF : …</div>
+    </div>
+  </div>
+
+  <!-- Signature dev -->
+  <div class="bg-black/40">
+    <div class="container py-3 text-[12px] text-white/70 flex flex-col md:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span>Développé avec passion par</span>
+        <a href="https://www.linkedin.com/in/barhamou-issaka-hama-90047b179/" target="_blank" rel="noopener" class="text-white hover:underline">
+          Hama Barhamou
+        </a>
+        <span class="hidden md:inline">—</span>
+        <a href="https://github.com/HamaBarhamou" target="_blank" rel="noopener" class="text-white/80 hover:text-white">GitHub</a>
+      </div>
+      <div class="opacity-80">
+        <span class="inline-flex items-center gap-1"><span class="h-2 w-2 rounded-full bg-emerald-400"></span> Disponible en freelance</span>
+      </div>
     </div>
   </div>
 </footer>
