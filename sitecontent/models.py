@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import RegexValidator
+from ckeditor_uploader.fields import RichTextUploadingField
 
 
 class TimeStamped(models.Model):
@@ -106,7 +107,7 @@ class ProjectImage(models.Model):
 class Post(TimeStamped):
     title = models.CharField(max_length=160)
     slug = models.SlugField(unique=True)
-    body = models.TextField()
+    body = RichTextUploadingField()
     published = models.BooleanField(default=True)
     pub_date = models.DateField(auto_now_add=True)
     cover = models.ImageField(upload_to="blog/", blank=True)

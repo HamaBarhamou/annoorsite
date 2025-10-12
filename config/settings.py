@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
+    "ckeditor",
+    "ckeditor_uploader",
     "sitecontent",
 ]
 
@@ -129,3 +131,19 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 DEFAULT_FROM_EMAIL = "no-reply@annoor.example"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # prod: smtp
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_IMAGE_BACKEND = "pillow"
+
+CKEDITOR_CONFIGS = {
+    "default": {
+        "toolbar": "full",
+        "height": 360,
+        "width": "100%",
+        "extraPlugins": ",".join(
+            [
+                "uploadimage",  # upload d’images
+            ]
+        ),
+    }
+}
