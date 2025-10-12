@@ -1,0 +1,58 @@
+:root{
+  --ink-900:#0f172a; /* fond */
+  --brand:#f97316;   /* orange */
+  --brand-600:#ea580c;
+}
+
+.anno-brand{
+  display:flex; align-items:center; gap:.5rem;
+  font-weight:600; font-size:14px; color:#fff; text-decoration:none;
+}
+.anno-logo{
+  width:18px; height:18px; border-radius:4px; background:var(--brand);
+  box-shadow:0 0 0 2px rgba(255,255,255,.12) inset;
+}
+
+/* Header admin */
+#header{
+  background:linear-gradient(90deg,var(--ink-900), #1e293b);
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+#header a:link, #header a:visited{ color:#fff; }
+
+/* Liens focus */
+a:focus, input:focus, select:focus, textarea:focus{
+  outline:2px solid var(--brand); outline-offset:2px;
+}
+
+/* Boutons principaux */
+.button, input[type=submit], .submit-row input{
+  background:var(--brand);
+  border-color:var(--brand);
+}
+.button:hover, input[type=submit]:hover, .submit-row input:hover{
+  background:var(--brand-600); border-color:var(--brand-600);
+}
+
+/* Login */
+.anno-login{
+  max-width:460px; margin:2rem auto; padding:2rem;
+  background:#fff; border:1px solid #e5e7eb; border-radius:14px;
+  box-shadow:0 10px 30px -12px rgba(2,8,23,.15);
+}
+.anno-login h1{ margin:0 0 .75rem 0; font-size:1.5rem; }
+.anno-login .form-row{ margin:.75rem 0; }
+.anno-login label{ font-size:.9rem; color:#334155; display:block; margin-bottom:.25rem; }
+.anno-login input[type=text], .anno-login input[type=password]{
+  width:100%; border:1px solid #cbd5e1; border-radius:10px; padding:.6rem .75rem;
+}
+.anno-login .submit-row{ margin-top:1rem; text-align:right; }
+.anno-login .submit-row input{
+  padding:.55rem 1rem; border-radius:10px; color:#fff;
+}
+.anno-login .errornote{
+  background:#fef3c7; border:1px solid #f59e0b; color:#92400e;
+  padding:.5rem .75rem; border-radius:.5rem; margin-bottom:.75rem;
+}
+.anno-login-help{ margin-top:.75rem; font-size:.9rem; }
+.anno-login-help a{ color:#334155; }

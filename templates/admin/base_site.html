@@ -1,0 +1,18 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}ANNOOR — Admin{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'admin/brand.css' %}">
+{% endblock %}
+
+{% block branding %}
+  <a href="{% url 'admin:index' %}" class="anno-brand">
+    <span class="anno-logo"></span>
+    <strong>ANNOOR</strong> — Administration
+  </a>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}

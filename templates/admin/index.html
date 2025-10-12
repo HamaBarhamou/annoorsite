@@ -1,0 +1,14 @@
+{% extends "admin/index.html" %}
+{% block content %}
+  <div class="dashboard" style="margin-bottom:1rem">
+    <div class="module">
+      <h2>Raccourcis</h2>
+      <ul>
+        <li><a href="{% url 'admin:sitecontent_project_add' %}">+ Nouveau projet</a></li>
+        <li><a href="{% url 'admin:sitecontent_service_add' %}">+ Nouveau service</a></li>
+        <li><a href="{% url 'admin:sitecontent_post_add' %}">+ Nouvel article</a></li>
+      </ul>
+    </div>
+  </div>
+  {{ block.super }}
+{% endblock %}

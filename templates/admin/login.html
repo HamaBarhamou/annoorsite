@@ -1,0 +1,45 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'admin/brand.css' %}">
+{% endblock %}
+
+{% block content %}
+<div id="content" class="anno-login">
+  <h1>Connexion</h1>
+  {% if form.errors and not form.non_field_errors %}
+    <p class="errornote">{% trans "Veuillez corriger les erreurs ci-dessous." %}</p>
+  {% endif %}
+  {% if form.non_field_errors %}
+    {% for error in form.non_field_errors %}
+      <p class="errornote">{{ error }}</p>
+    {% endfor %}
+  {% endif %}
+
+  <form action="" method="post" id="login-form" novalidate>
+    {% csrf_token %}
+    <div class="form-row">
+      <label for="id_username">{% trans 'Nom d’utilisateur' %}</label>
+      {{ form.username }}
+    </div>
+    <div class="form-row">
+      <label for="id_password">{% trans 'Mot de passe' %}</label>
+      {{ form.password }}
+    </div>
+
+    {% if next %}
+      <input type="hidden" name="next" value="{{ next }}">
+    {% endif %}
+
+    <div class="submit-row">
+      <input type="submit" value="{% trans 'Se connecter' %}">
+    </div>
+  </form>
+
+  <p class="anno-login-help">
+    <a href="/">{% trans "← Retour au site" %}</a>
+  </p>
+</div>
+{% endblock %}
