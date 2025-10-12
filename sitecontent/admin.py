@@ -13,6 +13,7 @@ admin.site.site_header = "ANNOOR — Administration"
 admin.site.site_title = "ANNOOR Admin"
 admin.site.index_title = "Tableau de bord"
 
+
 @admin.register(HomeSettings)
 class HomeSettingsAdmin(admin.ModelAdmin):
     fieldsets = (

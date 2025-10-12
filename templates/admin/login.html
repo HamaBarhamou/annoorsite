@@ -1,6 +1,8 @@
 {% extends "admin/base_site.html" %}
 {% load i18n static %}
 
+{% block title %}{% trans "Connexion" %} | {{ site_title|default:_("ANNOOR — Administration") }}{% endblock %}
+
 {% block extrastyle %}
   {{ block.super }}
   <link rel="stylesheet" href="{% static 'admin/brand.css' %}">
@@ -8,7 +10,18 @@
 
 {% block content %}
 <div id="content" class="anno-login">
-  <h1>Connexion</h1>
+  <div class="anno-login-brand">
+    <div class="anno-login-logo">
+      {# Remplace par ton logo si dispo #}
+      {# <img src="{% static 'admin/logo.svg' %}" alt="ANNOOR"> #}
+    </div>
+    <div>
+      <div class="anno-login-title">ANNOOR — Administration</div>
+      <div class="anno-login-tagline">Accès sécurisé au tableau de bord</div>
+    </div>
+  </div>
+  <div class="anno-login-sep"></div>
+
   {% if form.errors and not form.non_field_errors %}
     <p class="errornote">{% trans "Veuillez corriger les erreurs ci-dessous." %}</p>
   {% endif %}
@@ -28,10 +41,7 @@
       <label for="id_password">{% trans 'Mot de passe' %}</label>
       {{ form.password }}
     </div>
-
-    {% if next %}
-      <input type="hidden" name="next" value="{{ next }}">
-    {% endif %}
+    {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
 
     <div class="submit-row">
       <input type="submit" value="{% trans 'Se connecter' %}">
@@ -39,7 +49,10 @@
   </form>
 
   <p class="anno-login-help">
-    <a href="/">{% trans "← Retour au site" %}</a>
+    <a class="anno-back-site" href="/">{% trans "← Retour au site" %}</a>
   </p>
+
+  {# Option : notice complémentaire #}
+  {# <p class="anno-login-note">En cas de souci d’accès, contactez l’administrateur.</p> #}
 </div>
 {% endblock %}
