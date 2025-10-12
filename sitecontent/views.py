@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 from django.http import HttpResponse
 from .models import HomeSettings, Service, Project, Partner, Post
 from .forms import ContactForm
@@ -37,7 +39,59 @@ def service_detail(request, slug):
 
 
 def projects_list(request):
-    return render(request, "projects_list.html", {"projects": Project.objects.all()})
+    qs = Project.objects.all().prefetch_related("images")
+
+    # --- Query params (GET) ---
+    q = (request.GET.get("q") or "").strip()
+    client = (request.GET.get("client") or "").strip()
+    location = (request.GET.get("location") or "").strip()
+    year = (request.GET.get("year") or "").strip()
+    sort = (request.GET.get("sort") or "").strip()
+
+    # --- Recherche plein texte simple ---
+    if q:
+        qs = qs.filter(
+            Q(title__icontains=q)
+            | Q(client__icontains=q)
+            | Q(location__icontains=q)
+            | Q(context__icontains=q)
+            | Q(solution__icontains=q)
+            | Q(results__icontains=q)
+        )
+
+    # --- Filtres ---
+    if client:
+        qs = qs.filter(client__icontains=client)
+    if location:
+        qs = qs.filter(location__icontains=location)
+    if year:
+        qs = qs.filter(year__icontains=year)
+
+    # --- Tri ---
+    allowed_sorts = {
+        "-year": "-year",
+        "year": "year",
+        "title": "title",
+        "-created": "-created",  # fallback technique
+    }
+    if sort in allowed_sorts:
+        qs = qs.order_by(allowed_sorts[sort])
+    else:
+        qs = qs.order_by("-created", "title")  # tri recommandé par défaut
+
+    # --- Pagination ---
+    page = request.GET.get("page", "1")
+    paginator = Paginator(qs, 9)  # 9 cartes / page
+    try:
+        page_obj = paginator.get_page(page)
+    except (PageNotAnInteger, EmptyPage):
+        page_obj = paginator.get_page(1)
+
+    context = {
+        "projects": page_obj.object_list,  # utilisé par le template
+        "page_obj": page_obj,  # pagination (optionnelle dans le template)
+    }
+    return render(request, "projects_list.html", context)
 
 
 def project_detail(request, slug):

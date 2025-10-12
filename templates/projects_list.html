@@ -1,21 +1,168 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Références & Projets — ANNOOR{% endblock %}
+
+{% block extra_head %}
+  <meta name="description" content="Références & projets ANNOOR : installations, mises en service et maintenance industrielles.">
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"ItemList",
+    "name":"Références & projets",
+    "itemListElement":[
+      {% for p in projects %}
+      {
+        "@type":"ListItem",
+        "position": {{ forloop.counter }},
+        "url": "{{ request.scheme }}://{{ request.get_host }}{{ p.get_absolute_url }}",
+        "name":"{{ p.title|escapejs }}"
+      }{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ]
+  }
+  </script>
+{% endblock %}
+
+
 {% block content %}
-<div class="max-w-6xl mx-auto px-4 py-12">
-  <h1 class="text-3xl font-bold mb-6">Références & projets</h1>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-    {% for p in projects %}
-      <a href="{{ p.get_absolute_url }}" class="group rounded overflow-hidden border hover:shadow transition">
-        {% if p.cover %}
-          <img src="{{ p.cover.url }}" alt="" class="h-40 w-full object-cover group-hover:scale-[1.02] transition">
-        {% elif p.images.first %}
-          <img src="{{ p.images.first.image.url }}" alt="" class="h-40 w-full object-cover">
-        {% endif %}
-        <div class="p-5">
-          <div class="text-lg font-semibold">{{ p.title }}</div>
-          <p class="mt-2 text-sm opacity-80">{{ p.client }} — {{ p.location }}</p>
-        </div>
-      </a>
-    {% endfor %}
+
+<!-- HERO -->
+<section class="relative overflow-hidden">
+  <div class="absolute inset-0 h-[16rem] bg-gradient-to-b from-ink-900 via-ink-900/90 to-ink-900/75"></div>
+  <div class="absolute inset-0 h-[16rem] bg-[radial-gradient(closest-side,rgba(249,115,22,.18),transparent_70%)]"></div>
+  <div class="relative container text-white pt-12 pb-8">
+    <nav class="text-xs opacity-80 mb-2">
+      <a href="/" class="hover:underline">Accueil</a> / <span>Références & projets</span>
+    </nav>
+    <h1 class="text-3xl md:text-5xl font-extrabold leading-tight heading-accent">Références & projets</h1>
+    <p class="mt-2 max-w-2xl text-white/90">Sélection de réalisations : agro-alimentaire, industriel, BTP & utilités. Installations robustes, documentées et sûres.</p>
   </div>
-</div>
+</section>
+
+<!-- BARRE OUTILS (recherche + filtres + tri) -->
+<section class="container -mt-6 md:-mt-8">
+  <form method="get" class="card p-4 md:p-5">
+    <div class="flex flex-col md:flex-row md:items-center gap-3">
+
+      <!-- Recherche -->
+      <label class="relative flex-1">
+        <span class="sr-only">Recherche</span>
+        <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Rechercher un projet (titre, client, lieu)…"
+               class="w-full rounded-lg border-slate-300 pl-9 pr-3 py-2.5 focus:border-brand focus:ring-brand">
+        <svg xmlns="http://www.w3.org/2000/svg" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="currentColor"><path d="M21 20l-5.2-5.2a7 7 0 1 0-1 1L20 21zM4 10a6 6 0 1 1 12 0A6 6 0 0 1 4 10z"/></svg>
+      </label>
+
+      <!-- Filtres légers (GET) -->
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3 w-full md:w-auto">
+        <input type="text" name="client" value="{{ request.GET.client }}" placeholder="Client"
+               class="rounded-lg border-slate-300 py-2.5 px-3 focus:border-brand focus:ring-brand">
+        <input type="text" name="location" value="{{ request.GET.location }}" placeholder="Lieu"
+               class="rounded-lg border-slate-300 py-2.5 px-3 focus:border-brand focus:ring-brand">
+        <input type="text" name="year" value="{{ request.GET.year }}" placeholder="Année"
+               class="rounded-lg border-slate-300 py-2.5 px-3 focus:border-brand focus:ring-brand">
+      </div>
+
+      <!-- Tri -->
+      <label class="md:ml-auto">
+        <span class="sr-only">Trier</span>
+        <select name="sort" class="rounded-lg border-slate-300 py-2.5 px-3 focus:border-brand focus:ring-brand">
+          <option value="">Tri recommandé</option>
+          <option value="-year" {% if request.GET.sort == "-year" %}selected{% endif %}>Plus récents</option>
+          <option value="year" {% if request.GET.sort == "year" %}selected{% endif %}>Plus anciens</option>
+          <option value="title" {% if request.GET.sort == "title" %}selected{% endif %}>Titre A→Z</option>
+        </select>
+      </label>
+
+      <div class="flex gap-2 md:ml-1">
+        <button type="submit" class="btn btn-primary">Appliquer</button>
+        {% if request.GET.q or request.GET.client or request.GET.location or request.GET.year or request.GET.sort %}
+          <a href="{% url 'projects_list' %}" class="btn bg-white border text-slate-700 hover:bg-slate-50">Réinitialiser</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Chips d’état des filtres -->
+    {% if request.GET.q or request.GET.client or request.GET.location or request.GET.year %}
+    <div class="mt-3 flex flex-wrap gap-2 text-xs">
+      {% if request.GET.q %}<span class="chip chip-brand">Recherche : “{{ request.GET.q }}”</span>{% endif %}
+      {% if request.GET.client %}<span class="chip chip-sec">Client : {{ request.GET.client }}</span>{% endif %}
+      {% if request.GET.location %}<span class="chip chip-acc">Lieu : {{ request.GET.location }}</span>{% endif %}
+      {% if request.GET.year %}<span class="chip">Année : {{ request.GET.year }}</span>{% endif %}
+    </div>
+    {% endif %}
+  </form>
+</section>
+
+<!-- LISTE DES PROJETS -->
+<section class="container py-8 md:py-10">
+  {% if projects %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+      {% for p in projects %}
+        <a href="{{ p.get_absolute_url }}" class="group card overflow-hidden hover:shadow-xl transition">
+          {% if p.cover %}
+            <img src="{{ p.cover.url }}" alt="" loading="lazy"
+                 class="h-48 w-full object-cover group-hover:scale-[1.02] transition">
+          {% elif p.images.first %}
+            <img src="{{ p.images.first.image.url }}" alt="" loading="lazy" class="h-48 w-full object-cover">
+          {% else %}
+            <div class="h-48 w-full bg-slate-100 grid place-content-center text-slate-400">Aperçu indisponible</div>
+          {% endif %}
+
+          <div class="p-5">
+            <div class="text-lg font-semibold group-hover:underline">{{ p.title }}</div>
+            <div class="mt-1 flex flex-wrap gap-2 text-xs">
+              {% if p.client %}<span class="chip chip-sec">{{ p.client }}</span>{% endif %}
+              {% if p.location %}<span class="chip chip-brand">{{ p.location }}</span>{% endif %}
+              {% if p.year %}<span class="chip">{{ p.year }}</span>{% endif %}
+            </div>
+            {% if p.context %}
+              <p class="mt-2 text-sm text-slate-600 line-clamp-2">{{ p.context|striptags|truncatechars:140 }}</p>
+            {% endif %}
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+
+    <!-- Pagination (si fournie par la vue) -->
+    {% if page_obj %}
+      <div class="mt-8 flex items-center justify-between text-sm">
+        <div class="text-slate-600">
+          Page {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        </div>
+        <div class="flex items-center gap-2">
+          {% if page_obj.has_previous %}
+            <a class="btn bg-white border hover:bg-slate-50"
+               href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&amp;{% endif %}
+                      {% if request.GET.client %}client={{ request.GET.client|urlencode }}&amp;{% endif %}
+                      {% if request.GET.location %}location={{ request.GET.location|urlencode }}&amp;{% endif %}
+                      {% if request.GET.year %}year={{ request.GET.year|urlencode }}&amp;{% endif %}
+                      {% if request.GET.sort %}sort={{ request.GET.sort|urlencode }}&amp;{% endif %}
+                      page={{ page_obj.previous_page_number }}">Précédent</a>
+          {% endif %}
+          {% if page_obj.has_next %}
+            <a class="btn btn-primary"
+               href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&amp;{% endif %}
+                      {% if request.GET.client %}client={{ request.GET.client|urlencode }}&amp;{% endif %}
+                      {% if request.GET.location %}location={{ request.GET.location|urlencode }}&amp;{% endif %}
+                      {% if request.GET.year %}year={{ request.GET.year|urlencode }}&amp;{% endif %}
+                      {% if request.GET.sort %}sort={{ request.GET.sort|urlencode }}&amp;{% endif %}
+                      page={{ page_obj.next_page_number }}">Suivant</a>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  {% else %}
+    <!-- État vide -->
+    <div class="card p-8 text-center">
+      <h2 class="text-lg font-semibold">Aucun projet trouvé</h2>
+      <p class="mt-1 text-slate-600">Essayez d’élargir les filtres ou la recherche.</p>
+      <div class="mt-4 flex items-center justify-center gap-3">
+        <a href="{% url 'projects_list' %}" class="btn bg-white border hover:bg-slate-50">Réinitialiser</a>
+        <a href="/contact/" class="btn btn-primary">Parler à un expert</a>
+      </div>
+    </div>
+  {% endif %}
+</section>
+
 {% endblock %}
