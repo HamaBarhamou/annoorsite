@@ -1,0 +1,21 @@
+# Caddyfile — HTTPS automatique pour annoor.com
+annoor.com, www.annoor.com {
+    encode gzip zstd
+
+    # Static files
+    handle_path /static/* {
+        root * /vol/static
+        file_server
+    }
+
+    # Media uploads
+    handle_path /media/* {
+        root * /vol/media
+        file_server
+    }
+
+    # Django via Gunicorn
+    handle {
+        reverse_proxy web:8000
+    }
+}

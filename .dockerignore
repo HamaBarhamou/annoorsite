@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Venv
+.venv/
+env/
+venv/
+
+# Node (si un jour)
+node_modules/
+
+# VCS
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# Local files
+*.sqlite3
+media/
+static/
+
+# Docker build cache
+.cache/
