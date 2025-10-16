@@ -1,21 +1,38 @@
-# Caddyfile — HTTPS automatique pour annoor.com
-annoor.com, www.annoor.com {
-    encode gzip zstd
+# Redirection apex -> www
+annoor.tech {
+	redir https://www.annoor.tech{uri}
+}
 
-    # Static files
-    handle_path /static/* {
-        root * /vol/static
-        file_server
-    }
+# Site principal
+www.annoor.tech {
+	encode zstd gzip
 
-    # Media uploads
-    handle_path /media/* {
-        root * /vol/media
-        file_server
-    }
+	# Quelques en-têtes de sécurité utiles
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		X-Frame-Options "SAMEORIGIN"
+	}
 
-    # Django via Gunicorn
-    handle {
-        reverse_proxy web:8000
-    }
+	# Fichiers statiques
+	handle_path /static/* {
+		root * /vol/static
+		file_server
+	}
+
+	# Médias uploadés
+	handle_path /media/* {
+		root * /vol/media
+		file_server
+	}
+
+	# Tout le reste -> Django (Gunicorn)
+	route {
+		reverse_proxy web:8000 {
+			header_up X-Forwarded-Proto {scheme}
+			header_up X-Forwarded-For {remote_host}
+			header_up Host {host}
+		}
+	}
 }
