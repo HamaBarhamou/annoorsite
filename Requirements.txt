@@ -11,5 +11,4 @@ pillow==11.3.0
 platformdirs==4.5.0
 pytokens==0.1.10
 sqlparse==0.5.3
-whitenoise>=6.7
-
+whitenoise==6.11.0
