@@ -110,6 +110,7 @@ STATICFILES_DIRS = [BASE_DIR / "static"] if (BASE_DIR / "static").exists() else 
 STATICFILES_STORAGE = (
     "whitenoise.storage.CompressedManifestStaticFilesStorage"  # ← ajouté
 )
+STATIC_ROOT = BASE_DIR / "staticfiles"  # <-- AJOUT OBLIGATOIRE
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 

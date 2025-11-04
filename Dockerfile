@@ -14,24 +14,27 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-# Install deps
+# Déps Python
 COPY requirements.txt /app/
 RUN pip install -r requirements.txt
 
-# Copy project
+# Code
 COPY . /app
 
-# Crée dossiers runtime
+# Dossiers runtime (⚠️ espaces corrigés)
 RUN mkdir -p /app/staticfiles /app/media && \
-    adduser --disabled-password --gecos "" django && \
+    adduser --disabled-password --gecos "" django || true && \
     chown -R django:django /app
 
 USER django
 
-# Collectstatic au build (évite de le refaire à chaque boot)
+# Collectstatic (ne casse pas le build si pas de static)
 RUN python manage.py collectstatic --noinput || true
 
-# Entrypoint (migrations + launch)
+# Expose le port attendu par Back4App
+EXPOSE 8000
+
+# Entrée
 CMD ["bash", "-lc", "\
 python manage.py migrate --noinput && \
 gunicorn config.wsgi:application --bind 0.0.0.0:${PORT} --workers ${GUNICORN_WORKERS:-3} --threads ${GUNICORN_THREADS:-2} --timeout ${GUNICORN_TIMEOUT:-30} --access-logfile - --error-logfile -"]
