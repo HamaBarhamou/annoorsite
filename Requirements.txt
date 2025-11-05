@@ -12,3 +12,5 @@ platformdirs==4.5.0
 pytokens==0.1.10
 sqlparse==0.5.3
 whitenoise==6.11.0
+gunicorn==21.2.0
+psycopg2-binary==2.9.10
