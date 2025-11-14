@@ -220,3 +220,4 @@ python manage.py runserver
 ```
 
 Prêt à l’emploi. Personnalisez **SiteContact**, **HomeSettings** et publiez vos **services/projets/articles** ✨.
+
