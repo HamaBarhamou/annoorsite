@@ -1,5 +1,5 @@
 # config/settings.py
-import os
+import os, sys
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -8,6 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Débogage & clé secrète
 # -------------------------------------------------------------------
 SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-change-me-in-prod")
+IS_RUNSERVER = "runserver" in sys.argv
 DEBUG = os.environ.get("DEBUG", "False") in ("1", "true", "True")
 
 # -------------------------------------------------------------------
@@ -32,12 +33,17 @@ CSRF_TRUSTED_ORIGINS = [
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
-# Force HTTPS si activé (éviter boucles si le header n'est pas bien passé)
-SECURE_SSL_REDIRECT = os.environ.get("SECURE_SSL_REDIRECT", "1") in (
-    "1",
-    "true",
-    "True",
-)
+""" if DEBUG:
+    SECURE_SSL_REDIRECT = False
+else:
+    SECURE_SSL_REDIRECT = True """
+
+# SSL redirect: jamais en runserver; en prod sinon
+SECURE_SSL_REDIRECT = os.environ.get(
+    "SECURE_SSL_REDIRECT", "0" if IS_RUNSERVER or DEBUG else "1"
+) in ("1", "true", "True")
+
+print("DEBGUG=", DEBUG)
 
 # Cookies sécurisés selon DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
@@ -138,8 +144,13 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"] if (BASE_DIR / "static").exists() else []
 STATIC_ROOT = BASE_DIR / "staticfiles"  # collectstatic sort ici
 
-# WhiteNoise (fichiers versionnés + compression)
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# WhiteNoise storage : manifest seulement en prod
+if DEBUG:
+    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
+else:
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"  # à servir par le proxy (Caddy/Nginx)
@@ -193,3 +204,31 @@ if not DEBUG:
     CSRF_COOKIE_SAMESITE = "Lax"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# -------------------------------------------------------------------
+# Email (Namecheap PrivateEmail) — sécurisé & piloté par env
+# -------------------------------------------------------------------
+EMAIL_HOST = os.environ.get("EMAIL_HOST", "mail.privateemail.com")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "465"))  # 465=SSL direct ; 587=STARTTLS
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")  # ex: contact@annoor.tech
+EMAIL_HOST_PASSWORD = os.environ.get(
+    "EMAIL_HOST_PASSWORD"
+)  # *** via variable d'env ***
+EMAIL_TIMEOUT = int(os.environ.get("EMAIL_TIMEOUT", "20"))
+
+# Choix SSL/TLS via env pour flexibilité
+EMAIL_USE_SSL = os.environ.get("EMAIL_USE_SSL", "1") in ("1", "true", "True")
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "0") in ("1", "true", "True")
+
+# Fallback backend: si pas d'identifiants → console en dev/runserver
+if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+else:
+    # En dev sans secrets => pas d'erreur, on loggue dans la console
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+DEFAULT_FROM_EMAIL = os.environ.get(
+    "DEFAULT_FROM_EMAIL", "ANNOOR <contact@annoor.tech>"
+)
+SERVER_EMAIL = os.environ.get("SERVER_EMAIL", "django@annoor.tech")

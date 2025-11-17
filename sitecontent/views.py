@@ -1,9 +1,12 @@
-from django.shortcuts import render, get_object_or_404
+import time
+from django.shortcuts import render, get_object_or_404, redirect
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.db.models import Q
 from django.http import HttpResponse
 from .models import HomeSettings, Service, Project, Partner, Post
 from .forms import ContactForm
+from django.contrib import messages
+from django.core.cache import cache
 
 
 def about(request):
@@ -181,27 +184,58 @@ def blog_detail(request, slug):
     )
 
 
+def _client_ip(request):
+    # utile derrière proxy en prod
+    xff = request.META.get("HTTP_X_FORWARDED_FOR")
+    if xff:
+        return xff.split(",")[0].strip()
+    return request.META.get("REMOTE_ADDR", "")
+
+
+def _throttle_ok(ip: str, window_sec: int = 60, limit: int = 5) -> bool:
+    key = f"contact_hits:{ip}"
+    now = int(time.time())
+    hits = cache.get(key, [])
+    hits = [t for t in hits if now - t < window_sec]
+    hits.append(now)
+    cache.set(key, hits, window_sec)
+    return len(hits) <= limit
+
+
 def contact(request):
     """
     GET  -> affiche le formulaire
-    POST -> valide, envoie l'email et retourne un CSV (ou ré-affiche erreurs)
+    POST -> valide, envoie l'email (SMTP Namecheap), redirige vers 'merci'
+            et si l’utilisateur a coché 'Recevoir une copie', il reçoit un email
+            avec le CSV en pièce jointe (aucun téléchargement local).
     """
     if request.method == "POST":
+        ip = _client_ip(request)
+        if not _throttle_ok(ip):
+            messages.error(request, "Trop de tentatives. Réessayez dans une minute.")
+            return redirect("contact")
+
         form = ContactForm(request.POST)
         if form.is_valid():
-            # Envoi email
-            form.send_email()
-
-            # Option: message flash (si tu préfères rediriger au lieu de renvoyer un CSV)
-            # messages.success(request, "Merci ! Votre message a bien été envoyé.")
-
-            # Retourner un CSV téléchargeable
-            csv_bytes = form.to_csv_bytes()
-            resp = HttpResponse(csv_bytes, content_type="text/csv")
-            resp["Content-Disposition"] = 'attachment; filename="contact.csv"'
-            return resp
-        # si non valide -> on tombe en bas et on ré-affiche le formulaire avec erreurs
+            ok = form.send_email(
+                requester_ip=ip,
+                user_agent=request.META.get("HTTP_USER_AGENT", ""),
+            )
+            if ok:
+                messages.success(request, "Merci ! Votre message a bien été envoyé.")
+                return redirect("contact_thanks")
+            messages.error(
+                request,
+                "Envoi impossible pour le moment. Réessayez dans quelques minutes.",
+            )
+            # retomber sur le form rempli
+        else:
+            messages.error(request, "Veuillez corriger les champs en rouge.")
     else:
         form = ContactForm()
 
     return render(request, "contact.html", {"form": form})
+
+
+def contact_thanks(request):
+    return render(request, "contact_thanks.html")

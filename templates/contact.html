@@ -128,13 +128,19 @@
       {% endif %}
 
       <!-- RGPD / CTA -->
+            <!-- RGPD / CTA -->
       <div class="mt-6 flex flex-col md:flex-row md:items-center gap-3 md:justify-between">
         <p class="text-xs text-slate-500">En envoyant ce formulaire, vous acceptez notre <a href="#" class="underline">politique de confidentialité</a>.</p>
-        <button type="submit"
-                class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition focus:outline-none focus:ring-2 focus:ring-orange-500">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-          Envoyer
-        </button>
+        <div class="flex items-center gap-3">
+          <label class="text-sm text-slate-600 flex items-center gap-2">
+            {{ form.send_copy_csv }} <span>Recevoir une copie par email (CSV en pièce jointe)</span>
+          </label>
+          <button type="submit"
+                  class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-orange-500 text-white hover:bg-orange-600 transition focus:outline-none focus:ring-2 focus:ring-orange-500">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21 23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+            Envoyer
+          </button>
+        </div>
       </div>
     </form>
   </div>
