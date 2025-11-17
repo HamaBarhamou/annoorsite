@@ -3,7 +3,9 @@ from django import forms
 from django.conf import settings
 from django.core.mail import EmailMessage
 import csv, io
+import logging
 
+logger = logging.getLogger(__name__)
 # 👇 Ajout des classes manquantes pour bordures visibles + confort + focus net
 BASE_INPUT_CLASS = (
     "w-full border border-slate-300 rounded-lg px-3 py-2 text-[15px] "
@@ -125,8 +127,9 @@ class ContactForm(forms.Form):
 
         try:
             msg_internal.send(fail_silently=False)
-        except Exception:
+        except Exception as e:
             # On laisse la vue gérer l’erreur via messages.error
+            logger.exception("SMTP internal send failed: %s", getattr(e, "args", e))
             return False
 
         # 2) Copie à l’expéditeur (optionnelle)

@@ -209,6 +209,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # -------------------------------------------------------------------
 # Email (Namecheap PrivateEmail) — sécurisé & piloté par env
 # -------------------------------------------------------------------
+
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "mail.privateemail.com")
 EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "465"))  # 465=SSL direct ; 587=STARTTLS
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")  # ex: contact@annoor.tech
