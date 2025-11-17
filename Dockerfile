@@ -37,7 +37,7 @@ EXPOSE 8000
 
 # Entrée
 CMD ["bash", "-lc", "python manage.py migrate --noinput \
- && python manage.py createsuperuser --noinput || true \
+ && python manage.py ensure_superuser \
  && exec gunicorn config.wsgi:application --bind 0.0.0.0:${PORT:-8000} \
     --workers ${GUNICORN_WORKERS:-3} --threads ${GUNICORN_THREADS:-2} \
     --timeout ${GUNICORN_TIMEOUT:-30} --access-logfile - --error-logfile -"]
