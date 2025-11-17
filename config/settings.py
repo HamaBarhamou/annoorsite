@@ -212,7 +212,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 EMAIL_HOST = os.environ.get("EMAIL_HOST", "mail.privateemail.com")
 EMAIL_PORT = int(os.environ.get("EMAIL_PORT", "465"))  # 465=SSL direct ; 587=STARTTLS
-EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")  # ex: contact@annoor.tech
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "contact@annoor.tech")
 EMAIL_HOST_PASSWORD = os.environ.get(
     "EMAIL_HOST_PASSWORD"
 )  # *** via variable d'env ***
@@ -229,7 +229,6 @@ else:
     # En dev sans secrets => pas d'erreur, on loggue dans la console
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-DEFAULT_FROM_EMAIL = os.environ.get(
-    "DEFAULT_FROM_EMAIL", "ANNOOR <contact@annoor.tech>"
-)
-SERVER_EMAIL = os.environ.get("SERVER_EMAIL", "django@annoor.tech")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
+SERVER_EMAIL = os.environ.get("SERVER_EMAIL", EMAIL_HOST_USER)
+CONTACT_INBOX = os.environ.get("CONTACT_INBOX", EMAIL_HOST_USER)

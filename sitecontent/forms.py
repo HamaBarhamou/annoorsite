@@ -114,8 +114,8 @@ class ContactForm(forms.Form):
         body_internal = self._compose_internal_body(
             requester_ip=requester_ip, user_agent=user_agent
         )
-        from_email = getattr(settings, "DEFAULT_FROM_EMAIL", "contact@annoor.tech")
-        to_list = [getattr(settings, "CONTACT_INBOX", "contact@annoor.tech")]
+        from_email = settings.EMAIL_HOST_USER
+        to_list = [getattr(settings, "CONTACT_INBOX", settings.EMAIL_HOST_USER)]
 
         msg_internal = EmailMessage(
             subject=subject,
