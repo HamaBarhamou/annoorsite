@@ -4,8 +4,11 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 import csv, io
 
+# 👇 Ajout des classes manquantes pour bordures visibles + confort + focus net
 BASE_INPUT_CLASS = (
-    "w-full rounded-lg border-slate-300 focus:border-orange-500 focus:ring-orange-500"
+    "w-full border border-slate-300 rounded-lg px-3 py-2 text-[15px] "
+    "placeholder-slate-400 focus:outline-none focus:border-orange-500 "
+    "focus:ring-2 focus:ring-orange-500/40"
 )
 
 
@@ -52,7 +55,14 @@ class ContactForm(forms.Form):
     hp = forms.CharField(required=False, widget=forms.HiddenInput)
 
     # Option : recevoir une copie par email (avec CSV en PJ)
-    send_copy_csv = forms.BooleanField(required=False, initial=False)
+    # 👇 On garde la logique, on ajoute juste une classe visuelle
+    send_copy_csv = forms.BooleanField(
+        required=False,
+        initial=False,
+        widget=forms.CheckboxInput(
+            attrs={"class": "h-4 w-4 accent-orange-600 align-middle"}
+        ),
+    )
 
     def clean_hp(self):
         if self.cleaned_data.get("hp"):
@@ -96,9 +106,7 @@ class ContactForm(forms.Form):
         Retourne True si l’envoi interne a été tenté (pas forcément délivré).
         """
         cd = self.cleaned_data
-        subject = cd["subject"].strip()
-        if not subject:
-            subject = "Contact site"
+        subject = cd["subject"].strip() or "Contact site"
 
         # 1) Interne -> boîte ANNOOR
         body_internal = self._compose_internal_body(
@@ -142,9 +150,10 @@ class ContactForm(forms.Form):
             )
             # joindre le CSV
             msg_copy.attach(
-                filename="contact.csv", content=self._csv_bytes(), mimetype="text/csv"
+                filename="contact.csv",
+                content=self._csv_bytes(),
+                mimetype="text/csv",
             )
-            # on évite de casser le flux si la copie échoue
             try:
                 msg_copy.send(fail_silently=True)
             except Exception:

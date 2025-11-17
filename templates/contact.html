@@ -15,7 +15,6 @@
 {% endblock %}
 
 {% block content %}
-
 <!-- HERO -->
 <section class="relative">
   <div class="absolute inset-0 bg-gradient-to-br from-slate-900 to-slate-800"></div>
@@ -23,7 +22,7 @@
     <nav class="text-xs/relaxed opacity-80 mb-3">
       <a href="/" class="hover:underline">Accueil</a> / <span>Contact</span>
     </nav>
-    <h1 class="text-3xl md:text-5xl font-bold tracking-tight">Parlons de votre projet</h1>
+    <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight">Parlons de votre projet</h1>
     <p class="mt-3 max-w-2xl text-white/90">Dites-nous votre besoin, vos délais et vos contraintes. Nous revenons vers vous rapidement.</p>
   </div>
 </section>
@@ -41,20 +40,18 @@
 {% endif %}
 
 <section class="max-w-6xl mx-auto px-4 py-10 grid md:grid-cols-2 gap-10">
-
   <!-- FORM CARD -->
-  <div class="rounded-2xl border bg-white p-6 md:p-8 shadow-sm">
+  <div class="rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-card">
     <div class="flex items-start justify-between gap-4">
       <div>
         <h2 class="text-xl font-semibold">Formulaire de contact</h2>
         <p class="text-sm text-slate-600">Les champs marqués * sont obligatoires.</p>
       </div>
-      <span class="inline-flex items-center gap-2 text-xs text-slate-500">
+      <span class="inline-flex items-center gap-2 text-xs text-slate-600">
         <span class="size-2 rounded-full bg-emerald-500"></span> Réponse sous 24h
       </span>
     </div>
 
-    <!-- résumé erreurs globales -->
     {% if form.errors and not form.non_field_errors %}
       <div class="mt-5 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800">
         Veuillez corriger les champs surlignés ci-dessous.
@@ -66,13 +63,12 @@
       </div>
     {% endif %}
 
-    <form method="post" class="mt-6 space-y-4"
-          novalidate
-          onsubmit="this.querySelector('button[type=submit]').classList.add('opacity-70','pointer-events-none')">
+    <form method="post" class="mt-6 space-y-5" novalidate
+          onsubmit="const btn=this.querySelector('button[type=submit]'); btn.disabled=true; btn.classList.add('opacity-70','pointer-events-none'); btn.dataset.label=btn.textContent; btn.textContent='Envoi…';">
       {% csrf_token %}
 
       <!-- GRID -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <!-- NOM -->
         <div>
           <label for="{{ form.name.id_for_label }}" class="block text-xs uppercase tracking-wide text-slate-600 mb-1">Nom *</label>
@@ -114,25 +110,20 @@
       <div>
         <div class="flex items-center justify-between">
           <label for="{{ form.message.id_for_label }}" class="block text-xs uppercase tracking-wide text-slate-600 mb-1">Message *</label>
-          <span class="text-xs text-slate-400">Max 2000 caractères</span>
+          <span class="text-xs text-slate-500">Max 2000 caractères</span>
         </div>
         {{ form.message }}
         {% for err in form.message.errors %}<p class="mt-1 text-xs text-red-600">{{ err }}</p>{% endfor %}
       </div>
 
-      <!-- HONEYPOT -->
-      {% if form.hp %}
-        <div class="hidden">
-          {{ form.hp }}
-        </div>
-      {% endif %}
+      <!-- HONEYPOT (reste caché si présent) -->
+      {% if form.hp %}<div class="hidden">{{ form.hp }}</div>{% endif %}
 
       <!-- RGPD / CTA -->
-            <!-- RGPD / CTA -->
-      <div class="mt-6 flex flex-col md:flex-row md:items-center gap-3 md:justify-between">
-        <p class="text-xs text-slate-500">En envoyant ce formulaire, vous acceptez notre <a href="#" class="underline">politique de confidentialité</a>.</p>
-        <div class="flex items-center gap-3">
-          <label class="text-sm text-slate-600 flex items-center gap-2">
+      <div class="mt-6 flex flex-col md:flex-row md:items-center gap-4 md:justify-between">
+        <p class="text-xs text-slate-600">En envoyant ce formulaire, vous acceptez notre <a href="#" class="underline">politique de confidentialité</a>.</p>
+        <div class="flex items-center gap-4">
+          <label class="text-sm text-slate-700 inline-flex items-center gap-2 select-none">
             {{ form.send_copy_csv }} <span>Recevoir une copie par email (CSV en pièce jointe)</span>
           </label>
           <button type="submit"
@@ -147,38 +138,36 @@
 
   <!-- ASIDE -->
   <aside class="space-y-6">
-    <!-- Coordonnées (depuis SiteContact) -->
-    <div class="rounded-2xl border bg-white p-6 md:p-8 shadow-sm">
-    <h3 class="text-lg font-semibold">Coordonnées</h3>
-    <ul class="mt-3 text-sm text-slate-700 space-y-1">
+    <!-- Coordonnées -->
+    <div class="rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-card">
+      <h3 class="text-lg font-semibold">Coordonnées</h3>
+      <ul class="mt-3 text-sm text-slate-700 space-y-1">
         {% if site_contact.address or site_contact.city or site_contact.country %}
-        <li>
+          <li>
             {{ site_contact.address }}{% if site_contact.address %},{% endif %}
             {{ site_contact.city }}{% if site_contact.city and site_contact.country %},{% endif %}
             {{ site_contact.country }}
-        </li>
+          </li>
         {% endif %}
         {% if site_contact.phone %}<li>Tél : {{ site_contact.phone }}</li>{% endif %}
         {% if site_contact.email %}<li>Email : <a href="mailto:{{ site_contact.email }}" class="hover:underline">{{ site_contact.email }}</a></li>{% endif %}
         {% if site_contact.whatsapp_url %}
-        <li class="pt-2">
+          <li class="pt-2">
             <a href="{{ site_contact.whatsapp_url }}" class="inline-flex items-center gap-2 text-emerald-700 hover:underline" target="_blank" rel="noopener">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M20 3.5A4.5 4.5 0 0 1 24 8c0 7.732-6.268 14-14 14a13.94 13.94 0 0 1-7-1.88L0 24l3.03-2.94A13.94 13.94 0 0 1 1.88 14C1.88 6.268 8.148 0 15.88 0A4.5 4.5 0 0 1 20 3.5Z"/>
-            </svg>
-            WhatsApp
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M20 3.5A4.5 4.5 0 0 1 24 8c0 7.732-6.268 14-14 14a13.94 13.94 0 0 1-7-1.88L0 24l3.03-2.94A13.94 13.94 0 0 1 1.88 14C1.88 6.268 8.148 0 15.88 0A4.5 4.5 0 0 1 20 3.5Z"/></svg>
+              WhatsApp
             </a>
-        </li>
+          </li>
         {% endif %}
-    </ul>
-    <div class="mt-5 h-px bg-slate-200"></div>
-    {% if site_contact.hours %}
+      </ul>
+      <div class="mt-5 h-px bg-slate-200"></div>
+      {% if site_contact.hours %}
         <p class="mt-5 text-sm text-slate-600">Horaires : {{ site_contact.hours }}</p>
-    {% endif %}
+      {% endif %}
     </div>
 
     <!-- Pourquoi nous -->
-    <div class="rounded-2xl border bg-white p-6 md:p-8 shadow-sm">
+    <div class="rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-card">
       <h3 class="text-lg font-semibold">Pourquoi ANNOOR ?</h3>
       <ul class="mt-3 text-sm text-slate-700 space-y-2">
         <li>• Expertise industrielle et agro-procédés</li>
@@ -187,8 +176,8 @@
       </ul>
     </div>
 
-    <!-- FAQ courte (pure HTML) -->
-    <div class="rounded-2xl border bg-white p-6 md:p-8 shadow-sm">
+    <!-- FAQ courte -->
+    <div class="rounded-2xl border border-slate-200 bg-white p-6 md:p-8 shadow-card">
       <h3 class="text-lg font-semibold">FAQ</h3>
       <div class="mt-3 text-sm text-slate-700">
         <details class="border-b py-2">
@@ -207,5 +196,4 @@
     </div>
   </aside>
 </section>
-
 {% endblock %}
