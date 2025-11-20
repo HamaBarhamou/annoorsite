@@ -1,6 +1,7 @@
 # config/settings.py
 import os, sys
 from pathlib import Path
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -108,7 +109,18 @@ WSGI_APPLICATION = "config.wsgi.application"
 # -------------------------------------------------------------------
 # Base de données : Postgres en prod (via variables), sinon SQLite
 # -------------------------------------------------------------------
-if os.environ.get("DB_ENGINE") == "postgres":
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+if DATABASE_URL:
+    # Exemple Render : postgres://USER:PASSWORD@HOST:5432/DBNAME?sslmode=require
+    DATABASES = {
+        "default": dj_database_url.parse(
+            DATABASE_URL,
+            conn_max_age=int(os.environ.get("DB_CONN_MAX_AGE", "60")),
+            ssl_require=True,  # force SSL si le provider ne met pas ?sslmode=require
+        )
+    }
+elif os.environ.get("DB_ENGINE") == "postgres":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -117,6 +129,8 @@ if os.environ.get("DB_ENGINE") == "postgres":
             "PASSWORD": os.environ.get("DB_PASSWORD", ""),
             "HOST": os.environ.get("DB_HOST", "db"),
             "PORT": os.environ.get("DB_PORT", "5432"),
+            "CONN_MAX_AGE": int(os.environ.get("DB_CONN_MAX_AGE", "60")),
+            "OPTIONS": {"sslmode": os.environ.get("DB_SSLMODE", "require")},
         }
     }
 else:
