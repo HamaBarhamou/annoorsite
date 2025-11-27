@@ -165,9 +165,57 @@ if DEBUG:
 else:
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-
+# --- MEDIA local par défaut ---
 MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"  # à servir par le proxy (Caddy/Nginx)
+MEDIA_ROOT = BASE_DIR / "media"
+
+# --- Choix du backend médias (local ou R2/S3) ---
+USE_R2_MEDIA = os.environ.get("USE_R2_MEDIA", "0") in ("1", "true", "True")
+
+if USE_R2_MEDIA:
+    INSTALLED_APPS += ["storages"]  # django-storages
+
+    # Credentials/endpoint Cloudflare R2
+    AWS_S3_ENDPOINT_URL    = os.environ.get("R2_ENDPOINT")           # ex: https://<account_id>.r2.cloudflarestorage.com
+    AWS_STORAGE_BUCKET_NAME = os.environ.get("R2_BUCKET_NAME")
+    AWS_ACCESS_KEY_ID       = os.environ.get("R2_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY   = os.environ.get("R2_SECRET_ACCESS_KEY")
+
+    # Spécifiques R2
+    AWS_S3_REGION_NAME      = "auto"
+    AWS_S3_ADDRESSING_STYLE = "virtual"
+    AWS_S3_SIGNATURE_VERSION = "s3v4"
+    AWS_QUERYSTRING_AUTH    = False
+    AWS_DEFAULT_ACL         = None
+    AWS_S3_FILE_OVERWRITE   = False
+
+    # MEDIA_URL public: domaine perso si fourni, sinon endpoint R2
+    R2_PUBLIC_BASE_URL = os.environ.get("R2_PUBLIC_BASE_URL", "").rstrip("/")
+    if R2_PUBLIC_BASE_URL:
+        MEDIA_URL = f"{R2_PUBLIC_BASE_URL}/"
+    elif AWS_S3_ENDPOINT_URL and "://" in AWS_S3_ENDPOINT_URL:
+        MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_ENDPOINT_URL.split('://',1)[1].rstrip('/')}/"
+
+    # Django 5 storage API
+    STORAGES = {
+        "default": {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"},
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        } if not DEBUG else {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"
+        },
+    }
+else:
+    # Stockage local (filesystem)
+    STORAGES = {
+        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        } if not DEBUG else {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"
+        },
+    }
+
 
 # -------------------------------------------------------------------
 # Email
