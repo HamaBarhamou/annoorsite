@@ -5,13 +5,14 @@
 
 {% block extrastyle %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static 'admin/brand.css' %}">
+  {# chemin correct dans Django : admin/css/… #}
+  <link rel="stylesheet" href="{% static 'admin/css/brand.css' %}">
 {% endblock %}
 
 {% block branding %}
   <a href="{% url 'admin:index' %}" class="anno-brand" aria-label="Accueil administration ANNOOR">
     <span class="anno-logo">
-      <img src="{% static 'brand/logo.svg' %}" alt="" onerror="this.onerror=null;this.src='{% static 'brand/logo.png' %}';">
+      <img src="{% static 'brand/logo.png' %}" alt="ANNOOR">
     </span>
     <strong>ANNOOR</strong> — Administration
   </a>

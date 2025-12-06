@@ -5,15 +5,14 @@
 
 {% block extrastyle %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static 'admin/brand.css' %}">
+  <link rel="stylesheet" href="{% static 'admin/css/brand.css' %}">
 {% endblock %}
 
 {% block content %}
 <div id="content" class="anno-login">
   <div class="anno-login-brand">
     <div class="anno-login-logo">
-      {# Remplace par ton logo si dispo #}
-      {# <img src="{% static 'admin/logo.svg' %}" alt="ANNOOR"> #}
+      <img src="{% static 'brand/logo.png' %}" alt="ANNOOR"> 
     </div>
     <div>
       <div class="anno-login-title">ANNOOR — Administration</div>
@@ -51,8 +50,5 @@
   <p class="anno-login-help">
     <a class="anno-back-site" href="/">{% trans "← Retour au site" %}</a>
   </p>
-
-  {# Option : notice complémentaire #}
-  {# <p class="anno-login-note">En cas de souci d’accès, contactez l’administrateur.</p> #}
 </div>
 {% endblock %}
