@@ -215,6 +215,7 @@ else:
             "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"
         },
     }
+WHITENOISE_MANIFEST_STRICT = False
 
 
 
@@ -295,3 +296,4 @@ else:
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
 SERVER_EMAIL = os.environ.get("SERVER_EMAIL", EMAIL_HOST_USER)
 CONTACT_INBOX = os.environ.get("CONTACT_INBOX", EMAIL_HOST_USER)
+
