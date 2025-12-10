@@ -4,18 +4,6 @@ from pathlib import Path
 import dj_database_url
 from django.utils.module_loading import import_string
 
-from pathlib import Path
-from django.conf import settings
-from django.contrib.staticfiles.finders import find
-
-missing_files = []
-for asset in ["tinymce/js/tinymce/skins/ui/oxide/skin.shadowdom.js.map"]:
-    if not find(asset):
-        missing_files.append(asset)
-
-if missing_files:
-    raise RuntimeError(f"Missing files: {missing_files}")
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # -------------------------------------------------------------------
