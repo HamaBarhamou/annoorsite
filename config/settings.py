@@ -204,6 +204,11 @@ if USE_R2_MEDIA:
     # Remplace le backend médias
     STORAGES["default"] = {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"}
 
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+]
+
 # -------------------------------------------------------------------
 # Email
 # -------------------------------------------------------------------
