@@ -2,6 +2,7 @@
 import os, sys
 from pathlib import Path
 import dj_database_url
+from django.utils.module_loading import import_string
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -156,68 +157,52 @@ LOCALE_PATHS = [BASE_DIR / "locale"]
 # -------------------------------------------------------------------
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"] if (BASE_DIR / "static").exists() else []
-STATIC_ROOT = BASE_DIR / "staticfiles"  # collectstatic sort ici
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# WhiteNoise uniquement via STORAGES (pas de STATICFILES_STORAGE global)
+STORAGES = {
+    # stockage par défaut des médias (filesystem local tant que USE_R2_MEDIA=0)
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    # fichiers statiques : simple en dev, Manifest en prod
+    "staticfiles": (
+        {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"}
+        if DEBUG
+        else {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"}
+    ),
+}
 
-# WhiteNoise storage : manifest seulement en prod
-if DEBUG:
-    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
-else:
-    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+# En Manifest, si une entrée manque, WhiteNoise ne crashe pas (utile le temps de corriger)
+WHITENOISE_MANIFEST_STRICT = False
 
 # --- MEDIA local par défaut ---
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# --- Choix du backend médias (local ou R2/S3) ---
+# --- Choix du backend médias (Cloudflare R2/S3) ---
 USE_R2_MEDIA = os.environ.get("USE_R2_MEDIA", "0") in ("1", "true", "True")
-
 if USE_R2_MEDIA:
     INSTALLED_APPS += ["storages"]  # django-storages
 
-    # Credentials/endpoint Cloudflare R2
-    AWS_S3_ENDPOINT_URL    = os.environ.get("R2_ENDPOINT")           # ex: https://<account_id>.r2.cloudflarestorage.com
+    AWS_S3_ENDPOINT_URL = os.environ.get("R2_ENDPOINT")
     AWS_STORAGE_BUCKET_NAME = os.environ.get("R2_BUCKET_NAME")
-    AWS_ACCESS_KEY_ID       = os.environ.get("R2_ACCESS_KEY_ID")
-    AWS_SECRET_ACCESS_KEY   = os.environ.get("R2_SECRET_ACCESS_KEY")
+    AWS_ACCESS_KEY_ID = os.environ.get("R2_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.environ.get("R2_SECRET_ACCESS_KEY")
 
-    # Spécifiques R2
-    AWS_S3_REGION_NAME      = "auto"
+    AWS_S3_REGION_NAME = "auto"
     AWS_S3_ADDRESSING_STYLE = "virtual"
     AWS_S3_SIGNATURE_VERSION = "s3v4"
-    AWS_QUERYSTRING_AUTH    = False
-    AWS_DEFAULT_ACL         = None
-    AWS_S3_FILE_OVERWRITE   = False
+    AWS_QUERYSTRING_AUTH = False
+    AWS_DEFAULT_ACL = None
+    AWS_S3_FILE_OVERWRITE = False
 
-    # MEDIA_URL public: domaine perso si fourni, sinon endpoint R2
     R2_PUBLIC_BASE_URL = os.environ.get("R2_PUBLIC_BASE_URL", "").rstrip("/")
     if R2_PUBLIC_BASE_URL:
         MEDIA_URL = f"{R2_PUBLIC_BASE_URL}/"
     elif AWS_S3_ENDPOINT_URL and "://" in AWS_S3_ENDPOINT_URL:
         MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_ENDPOINT_URL.split('://',1)[1].rstrip('/')}/"
 
-    # Django 5 storage API
-    STORAGES = {
-        "default": {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"},
-        "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
-        } if not DEBUG else {
-            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"
-        },
-    }
-else:
-    # Stockage local (filesystem)
-    STORAGES = {
-        "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
-        "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
-        } if not DEBUG else {
-            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"
-        },
-    }
-WHITENOISE_MANIFEST_STRICT = False
-
-
+    # Remplace le backend médias
+    STORAGES["default"] = {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"}
 
 # -------------------------------------------------------------------
 # Email
@@ -296,4 +281,3 @@ else:
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER)
 SERVER_EMAIL = os.environ.get("SERVER_EMAIL", EMAIL_HOST_USER)
 CONTACT_INBOX = os.environ.get("CONTACT_INBOX", EMAIL_HOST_USER)
-
