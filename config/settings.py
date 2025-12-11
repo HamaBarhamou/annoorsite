@@ -183,35 +183,34 @@ USE_R2_MEDIA = os.environ.get("USE_R2_MEDIA", "0") in ("1", "true", "True")
 if USE_R2_MEDIA:
     INSTALLED_APPS += ["storages"]
 
-    AWS_STORAGE_BUCKET_NAME = os.environ["R2_BUCKET_NAME"]
-    AWS_S3_ENDPOINT_URL = os.environ["R2_ENDPOINT"]
+    AWS_S3_ENDPOINT_URL = os.environ.get("R2_ENDPOINT")
+    AWS_STORAGE_BUCKET_NAME = os.environ.get("R2_BUCKET_NAME")
+    AWS_ACCESS_KEY_ID = os.environ.get("R2_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.environ.get("R2_SECRET_ACCESS_KEY")
+
     AWS_S3_REGION_NAME = "auto"
     AWS_S3_SIGNATURE_VERSION = "s3v4"
-    AWS_S3_ADDRESSING_STYLE = "virtual"
+    AWS_S3_ADDRESSING_STYLE = "virtual"  # clé: utilise <bucket>.<account>...
+
     AWS_QUERYSTRING_AUTH = False
     AWS_DEFAULT_ACL = None
     AWS_S3_FILE_OVERWRITE = False
 
-    # AUCUN location/prefix ici : on stocke à la racine du bucket
-    # (pas de AWS_LOCATION, pas de 'location' personnalisé)
+    # Si présent, force l’URL publique retournée
+    AWS_S3_CUSTOM_DOMAIN = os.environ.get("AWS_S3_CUSTOM_DOMAIN", "").strip() or None
 
-    AWS_S3_CUSTOM_DOMAIN = os.environ.get("AWS_S3_CUSTOM_DOMAIN")  # ex: pub-....r2.dev
+    STORAGES["default"] = {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"}
 
-    # Domaine public: privilégier le domaine custom si présent
+    # Base URL publique renvoyée par Django
     if AWS_S3_CUSTOM_DOMAIN:
         MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
     else:
-        # fallback sur le domaine cloudflarestorage (virtual hosted)
+        # fallback: origin R2 « virtual hosted »
+        # donnera: https://<bucket>.<account>.r2.cloudflarestorage.com/<key>
         MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_ENDPOINT_URL.split('://',1)[1].rstrip('/')}/"
 
-    STORAGES["default"] = {
-        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
-        # NE PAS définir 'location': on veut des clés 'uploads/...', 'media/...', etc. à la racine
-    }
-else:
-    # filesystem local
-    MEDIA_URL = "/media/"
-    MEDIA_ROOT = BASE_DIR / "media"
+    # Active le backend S3 pour les médias
+    STORAGES["default"] = {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"}
 
 
 STATICFILES_FINDERS = [
