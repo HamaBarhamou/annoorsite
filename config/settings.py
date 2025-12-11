@@ -179,9 +179,10 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 # --- Choix du backend médias (Cloudflare R2/S3) ---
+# --- R2 (S3-compatible) ---
 USE_R2_MEDIA = os.environ.get("USE_R2_MEDIA", "0") in ("1", "true", "True")
 if USE_R2_MEDIA:
-    INSTALLED_APPS += ["storages"]  # django-storages
+    INSTALLED_APPS += ["storages"]
 
     AWS_S3_ENDPOINT_URL = os.environ.get("R2_ENDPOINT")
     AWS_STORAGE_BUCKET_NAME = os.environ.get("R2_BUCKET_NAME")
@@ -189,20 +190,25 @@ if USE_R2_MEDIA:
     AWS_SECRET_ACCESS_KEY = os.environ.get("R2_SECRET_ACCESS_KEY")
 
     AWS_S3_REGION_NAME = "auto"
-    AWS_S3_ADDRESSING_STYLE = "virtual"
     AWS_S3_SIGNATURE_VERSION = "s3v4"
+
+    # IMPORTANT : évite le sous-domaine <bucket>.<account>.r2... → pas de souci TLS
+    AWS_S3_ADDRESSING_STYLE = "path"
+
     AWS_QUERYSTRING_AUTH = False
     AWS_DEFAULT_ACL = None
     AWS_S3_FILE_OVERWRITE = False
 
+    # URL publique (cdn/r2.dev/sous-domaine media)
     R2_PUBLIC_BASE_URL = os.environ.get("R2_PUBLIC_BASE_URL", "").rstrip("/")
     if R2_PUBLIC_BASE_URL:
         MEDIA_URL = f"{R2_PUBLIC_BASE_URL}/"
     elif AWS_S3_ENDPOINT_URL and "://" in AWS_S3_ENDPOINT_URL:
-        MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_ENDPOINT_URL.split('://',1)[1].rstrip('/')}/"
+        # fallback public (peu utile sans ACL public)
+        MEDIA_URL = f"{AWS_S3_ENDPOINT_URL.rstrip('/')}/{AWS_STORAGE_BUCKET_NAME}/"
 
-    # Remplace le backend médias
     STORAGES["default"] = {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"}
+
 
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
