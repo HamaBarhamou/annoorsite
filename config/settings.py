@@ -179,7 +179,6 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 # --- Choix du backend médias (Cloudflare R2/S3) ---
-# --- R2 (S3-compatible) ---
 USE_R2_MEDIA = os.environ.get("USE_R2_MEDIA", "0") in ("1", "true", "True")
 if USE_R2_MEDIA:
     INSTALLED_APPS += ["storages"]
@@ -189,23 +188,26 @@ if USE_R2_MEDIA:
     AWS_ACCESS_KEY_ID = os.environ.get("R2_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = os.environ.get("R2_SECRET_ACCESS_KEY")
 
-    # IMPORTANT : config réseau/TLS et addressing style
     AWS_S3_REGION_NAME = "auto"
     AWS_S3_SIGNATURE_VERSION = "s3v4"
-    AWS_S3_ADDRESSING_STYLE = "virtual"
-    AWS_S3_VERIFY = True
+    AWS_S3_ADDRESSING_STYLE = "virtual"  # clé: utilise <bucket>.<account>...
 
     AWS_QUERYSTRING_AUTH = False
     AWS_DEFAULT_ACL = None
     AWS_S3_FILE_OVERWRITE = False
 
-    # URL publique (via votre sous-domaine ou via r2.dev)
-    R2_PUBLIC_BASE_URL = os.environ.get("R2_PUBLIC_BASE_URL", "").rstrip("/")
-    if R2_PUBLIC_BASE_URL:
-        MEDIA_URL = f"{R2_PUBLIC_BASE_URL}/"
-    elif AWS_S3_ENDPOINT_URL and "://" in AWS_S3_ENDPOINT_URL:
-        # fallback public (peu utile sans ACL public)
-        MEDIA_URL = f"{AWS_S3_ENDPOINT_URL.rstrip('/')}/{AWS_STORAGE_BUCKET_NAME}/"
+    # Si présent, force l’URL publique retournée
+    AWS_S3_CUSTOM_DOMAIN = os.environ.get("AWS_S3_CUSTOM_DOMAIN", "").strip() or None
+
+    STORAGES["default"] = {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"}
+
+    # Base URL publique renvoyée par Django
+    if AWS_S3_CUSTOM_DOMAIN:
+        MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+    else:
+        # fallback: origin R2 « virtual hosted »
+        # donnera: https://<bucket>.<account>.r2.cloudflarestorage.com/<key>
+        MEDIA_URL = f"https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_ENDPOINT_URL.split('://',1)[1].rstrip('/')}/"
 
     # Active le backend S3 pour les médias
     STORAGES["default"] = {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"}
