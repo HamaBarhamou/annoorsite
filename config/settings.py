@@ -189,17 +189,17 @@ if USE_R2_MEDIA:
     AWS_ACCESS_KEY_ID = os.environ.get("R2_ACCESS_KEY_ID")
     AWS_SECRET_ACCESS_KEY = os.environ.get("R2_SECRET_ACCESS_KEY")
 
+    # IMPORTANT : config réseau/TLS et addressing style
     AWS_S3_REGION_NAME = "auto"
     AWS_S3_SIGNATURE_VERSION = "s3v4"
-
-    # IMPORTANT : évite le sous-domaine <bucket>.<account>.r2... → pas de souci TLS
-    AWS_S3_ADDRESSING_STYLE = "path"
+    AWS_S3_ADDRESSING_STYLE = "virtual"
+    AWS_S3_VERIFY = True
 
     AWS_QUERYSTRING_AUTH = False
     AWS_DEFAULT_ACL = None
     AWS_S3_FILE_OVERWRITE = False
 
-    # URL publique (cdn/r2.dev/sous-domaine media)
+    # URL publique (via votre sous-domaine ou via r2.dev)
     R2_PUBLIC_BASE_URL = os.environ.get("R2_PUBLIC_BASE_URL", "").rstrip("/")
     if R2_PUBLIC_BASE_URL:
         MEDIA_URL = f"{R2_PUBLIC_BASE_URL}/"
@@ -207,6 +207,7 @@ if USE_R2_MEDIA:
         # fallback public (peu utile sans ACL public)
         MEDIA_URL = f"{AWS_S3_ENDPOINT_URL.rstrip('/')}/{AWS_STORAGE_BUCKET_NAME}/"
 
+    # Active le backend S3 pour les médias
     STORAGES["default"] = {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"}
 
 
